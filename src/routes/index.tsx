@@ -1,24 +1,127 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { BookOpen, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+import { PageShell } from "@/components/PageShell";
+import { BookCard } from "@/components/BookCard";
+import { Button } from "@/components/ui/button";
+import { useBooks, useFavorites, useOwnedBookIds, useToggleFavorite } from "@/lib/library";
+import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Biblioteca Proibida — Livros apócrifos em acervo digital" },
+      {
+        name: "description",
+        content:
+          "Explore o acervo digital de livros apócrifos: busca, categorias, favoritos e compra individual por título.",
+      },
+      { property: "og:title", content: "Biblioteca Proibida — Acervo digital" },
+      {
+        property: "og:description",
+        content: "Livros apócrifos e textos esquecidos com compra individual.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const { data: books = [], isLoading } = useBooks();
+  const { data: favorites = [] } = useFavorites();
+  const toggleFavorite = useToggleFavorite();
+  const owned = useOwnedBookIds();
+  const cart = useCart();
+  const { user } = useAuth();
+
+  const featured = books.filter((b) => b.is_featured).slice(0, 4);
+  const showcase = featured.length > 0 ? featured : books.slice(0, 4);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <PageShell>
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="mx-auto max-w-4xl px-4 py-24 text-center sm:px-6 sm:py-32">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-4 py-1 text-xs tracking-[0.2em] text-primary uppercase">
+            <Sparkles className="size-3" />
+            Acervo restrito
+          </span>
+          <h1 className="mt-6 font-display text-4xl leading-tight font-bold sm:text-6xl">
+            Os livros que <span className="text-gradient-gold">não entraram</span> no cânone
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-muted-foreground">
+            Textos apócrifos, escritos esquecidos e traduções raras reunidos em um acervo digital
+            organizado. Compre apenas os títulos que quiser ler.
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Button size="lg" asChild>
+              <Link to="/catalogo">
+                <Search className="size-4" />
+                Explorar catálogo
+              </Link>
+            </Button>
+            {!user ? (
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/auth">Criar conta grátis</Link>
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-3">
+        {[
+          { icon: BookOpen, title: "Leitura organizada", text: "Categorias, busca e detalhes completos de cada obra." },
+          { icon: ShieldCheck, title: "Compra individual", text: "Pague só pelos títulos que quiser, sem assinatura." },
+          { icon: Sparkles, title: "Acervo curado", text: "Textos raros com sinopses, avaliações e contexto histórico." },
+        ].map(({ icon: Icon, title, text }) => (
+          <div key={title} className="rounded-xl border border-border bg-card p-6">
+            <Icon className="size-5 text-gold" />
+            <h2 className="mt-4 font-display text-lg font-bold">{title}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{text}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+        <div className="flex items-end justify-between">
+          <h2 className="font-display text-2xl font-bold sm:text-3xl">Destaques do acervo</h2>
+          <Button variant="ghost" asChild>
+            <Link to="/catalogo">Ver tudo</Link>
+          </Button>
+        </div>
+
+        {isLoading ? (
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-80 animate-pulse rounded-xl border border-border bg-card/60" />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {showcase.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                isFavorite={favorites.includes(book.id)}
+                owned={owned.has(book.id)}
+                inCart={cart.has(book.id)}
+                onToggleFavorite={(b) => {
+                  if (!user) {
+                    toast.error("Entre na sua conta para favoritar.");
+                    return;
+                  }
+                  toggleFavorite.mutate({ bookId: b.id, isFavorite: favorites.includes(b.id) });
+                }}
+                onAddToCart={(b) => {
+                  cart.add(b.id);
+                  toast.success(`${b.title} adicionado ao carrinho.`);
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    </PageShell>
   );
 }
