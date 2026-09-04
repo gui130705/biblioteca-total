@@ -153,11 +153,18 @@ export function useCreateOrder() {
 export function useUpsertBook() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...patch }: Partial<Book> & { id: string }) => {
-      const update: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(patch)) {
-        if (value !== undefined) update[key] = value;
-      }
+    mutationFn: async ({
+      id,
+      price_cents,
+      is_published,
+    }: {
+      id: string;
+      price_cents?: number;
+      is_published?: boolean;
+    }) => {
+      const update: { price_cents?: number; is_published?: boolean } = {};
+      if (price_cents !== undefined) update.price_cents = price_cents;
+      if (is_published !== undefined) update.is_published = is_published;
       const { error } = await supabase.from("books").update(update).eq("id", id);
       if (error) throw error;
     },
