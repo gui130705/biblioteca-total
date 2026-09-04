@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as ContaRouteImport } from './routes/conta'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as LivroSlugRouteImport } from './routes/livro.$slug'
 
@@ -36,6 +37,11 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaRoute = ContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FavoritosRoute = FavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/catalogo': typeof CatalogoRoute
+  '/conta': typeof ContaRoute
   '/favoritos': typeof FavoritosRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/catalogo': typeof CatalogoRoute
+  '/conta': typeof ContaRoute
   '/favoritos': typeof FavoritosRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
@@ -69,21 +77,36 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/carrinho': typeof CarrinhoRoute
   '/catalogo': typeof CatalogoRoute
+  '/conta': typeof ContaRoute
   '/favoritos': typeof FavoritosRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/carrinho' | '/catalogo' | '/favoritos' | '/livro/$slug'
+    | '/'
+    | '/auth'
+    | '/carrinho'
+    | '/catalogo'
+    | '/conta'
+    | '/favoritos'
+    | '/livro/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/carrinho' | '/catalogo' | '/favoritos' | '/livro/$slug'
+  to:
+    | '/'
+    | '/auth'
+    | '/carrinho'
+    | '/catalogo'
+    | '/conta'
+    | '/favoritos'
+    | '/livro/$slug'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/carrinho'
     | '/catalogo'
+    | '/conta'
     | '/favoritos'
     | '/livro/$slug'
   fileRoutesById: FileRoutesById
@@ -93,6 +116,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarrinhoRoute: typeof CarrinhoRoute
   CatalogoRoute: typeof CatalogoRoute
+  ContaRoute: typeof ContaRoute
   FavoritosRoute: typeof FavoritosRoute
   LivroSlugRoute: typeof LivroSlugRoute
 }
@@ -127,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta': {
+      id: '/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof ContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/favoritos': {
       id: '/favoritos'
       path: '/favoritos'
@@ -149,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarrinhoRoute: CarrinhoRoute,
   CatalogoRoute: CatalogoRoute,
+  ContaRoute: ContaRoute,
   FavoritosRoute: FavoritosRoute,
   LivroSlugRoute: LivroSlugRoute,
 }
