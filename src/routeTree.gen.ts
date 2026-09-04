@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as LivroSlugRouteImport } from './routes/livro.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LivroSlugRoute = LivroSlugRouteImport.update({
   id: '/livro/$slug',
   path: '/livro/$slug',
@@ -32,30 +38,34 @@ const LivroSlugRoute = LivroSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/favoritos': typeof FavoritosRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/favoritos': typeof FavoritosRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/favoritos': typeof FavoritosRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/catalogo' | '/livro/$slug'
+  fullPaths: '/' | '/catalogo' | '/favoritos' | '/livro/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/catalogo' | '/livro/$slug'
-  id: '__root__' | '/' | '/catalogo' | '/livro/$slug'
+  to: '/' | '/catalogo' | '/favoritos' | '/livro/$slug'
+  id: '__root__' | '/' | '/catalogo' | '/favoritos' | '/livro/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogoRoute: typeof CatalogoRoute
+  FavoritosRoute: typeof FavoritosRoute
   LivroSlugRoute: typeof LivroSlugRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/livro/$slug': {
       id: '/livro/$slug'
       path: '/livro/$slug'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogoRoute: CatalogoRoute,
+  FavoritosRoute: FavoritosRoute,
   LivroSlugRoute: LivroSlugRoute,
 }
 export const routeTree = rootRouteImport
