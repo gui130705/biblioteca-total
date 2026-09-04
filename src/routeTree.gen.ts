@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
+import { Route as LivroSlugRouteImport } from './routes/livro.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LivroSlugRoute = LivroSlugRouteImport.update({
+  id: '/livro/$slug',
+  path: '/livro/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/catalogo': typeof CatalogoRoute
+  '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/catalogo'
+  fullPaths: '/' | '/catalogo' | '/livro/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/catalogo'
-  id: '__root__' | '/' | '/catalogo'
+  to: '/' | '/catalogo' | '/livro/$slug'
+  id: '__root__' | '/' | '/catalogo' | '/livro/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogoRoute: typeof CatalogoRoute
+  LivroSlugRoute: typeof LivroSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/livro/$slug': {
+      id: '/livro/$slug'
+      path: '/livro/$slug'
+      fullPath: '/livro/$slug'
+      preLoaderRoute: typeof LivroSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogoRoute: CatalogoRoute,
+  LivroSlugRoute: LivroSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
