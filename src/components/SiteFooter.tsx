@@ -9,8 +9,7 @@ export function SiteFooter() {
             Biblioteca Proibida
           </p>
           <p className="mt-3 text-sm text-muted-foreground">
-            Acervo digital de textos apócrifos e livros esquecidos, com compra individual por
-            título.
+            Acervo digital de textos apócrifos e livros esquecidos, com acesso gratuito.
           </p>
         </div>
         <div>
@@ -28,7 +27,7 @@ export function SiteFooter() {
             </li>
             <li>
               <Link to="/carrinho" className="hover:text-foreground">
-                Carrinho
+                Minha biblioteca
               </Link>
             </li>
             <li>
@@ -39,11 +38,10 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <p className="text-sm font-semibold">Compras</p>
+          <p className="text-sm font-semibold">Acesso livre</p>
           <p className="mt-3 text-sm text-muted-foreground">
-            Cada livro é vendido separadamente. Os preços exibidos são de exemplo e podem ser
-            ajustados na administração do catálogo. O checkout com cobrança real é ativado após a
-            conexão da conta de pagamentos.
+            Todos os títulos atuais estão liberados gratuitamente. Adicione os livros que quiser à
+            sua biblioteca e comece a ler.
           </p>
         </div>
       </div>

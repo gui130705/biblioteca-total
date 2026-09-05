@@ -14,10 +14,12 @@ export const Route = createFileRoute("/auth")({
       { title: "Entrar ou Criar Conta — Biblioteca Proibida" },
       {
         name: "description",
-        content: "Acesse sua conta para salvar favoritos, comprar títulos e ler seus livros.",
+        content: "Acesse sua conta para salvar favoritos, organizar sua biblioteca e ler gratuitamente.",
       },
       { property: "og:title", content: "Entrar ou Criar Conta — Biblioteca Proibida" },
       { property: "og:description", content: "Área do leitor da Biblioteca Proibida." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,
@@ -77,7 +79,7 @@ function AuthPage() {
           {mode === "login" ? "Entrar na sua conta" : "Criar sua conta"}
         </h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          Favoritos, compras e leitura em um só lugar.
+          Favoritos, biblioteca e leitura gratuita em um só lugar.
         </p>
 
         <form onSubmit={(e) => void handleSubmit(e)} className="mt-8 space-y-4">

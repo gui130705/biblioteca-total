@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BookOpen, Heart, ShoppingCart, Star } from "lucide-react";
+import { ArrowLeft, BookOpen, Heart, Library, Star } from "lucide-react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { BookCover } from "@/components/BookCover";
@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator";
 import { useBook, useFavorites, useOwnedBookIds, useToggleFavorite } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
-import { formatPrice } from "@/lib/books";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/livro/$slug")({
@@ -18,13 +17,15 @@ export const Route = createFileRoute("/livro/$slug")({
       { title: "Detalhes do livro — Biblioteca Proibida" },
       {
         name: "description",
-        content: "Sinopse, categoria, avaliação e preço do título no acervo da Biblioteca Proibida.",
+        content: "Sinopse, categoria, avaliação e acesso gratuito ao título na Biblioteca Proibida.",
       },
       { property: "og:title", content: "Detalhes do livro — Biblioteca Proibida" },
       {
         property: "og:description",
-        content: "Veja a sinopse completa e compre o título individualmente.",
+        content: "Veja a sinopse completa e adicione o título gratuitamente à sua biblioteca.",
       },
+      { property: "og:type", content: "book" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: BookDetail,
@@ -126,11 +127,9 @@ function BookDetail() {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="text-xs tracking-widest text-muted-foreground uppercase">
-                    Compra individual
+                    Acesso livre
                   </p>
-                  <p className="font-display text-3xl font-bold text-gold">
-                    {formatPrice(book.price_cents, book.currency)}
-                  </p>
+                  <p className="font-display text-3xl font-bold text-gold">Grátis</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button
@@ -147,9 +146,11 @@ function BookDetail() {
                     {isFavorite ? "Nos favoritos" : "Favoritar"}
                   </Button>
                   {isOwned ? (
-                    <Button disabled>
+                      <Button asChild>
+                        <Link to="/carrinho">
                       <BookOpen className="size-4" />
-                      Você já possui
+                        Ler agora
+                        </Link>
                     </Button>
                   ) : (
                     <>
@@ -157,15 +158,15 @@ function BookDetail() {
                         variant="secondary"
                         onClick={() => {
                           cart.add(book.id);
-                          toast.success("Adicionado ao carrinho.");
+                          toast.success("Adicionado à sua biblioteca.");
                         }}
                         disabled={cart.has(book.id)}
                       >
-                        <ShoppingCart className="size-4" />
-                        {cart.has(book.id) ? "No carrinho" : "Adicionar"}
+                        <Library className="size-4" />
+                        {cart.has(book.id) ? "Na biblioteca" : "Adicionar à biblioteca"}
                       </Button>
-                      <Button asChild onClick={() => cart.add(book.id)}>
-                        <Link to="/carrinho">Comprar agora</Link>
+                      <Button asChild>
+                        <Link to="/carrinho">Ver minha biblioteca</Link>
                       </Button>
                     </>
                   )}

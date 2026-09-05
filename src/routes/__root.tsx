@@ -82,12 +82,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Catálogo digital de livros apócrifos e textos esquecidos, com busca, favoritos e compra individual por título.",
+          "Catálogo digital gratuito de livros apócrifos e textos esquecidos, com busca, favoritos e biblioteca pessoal.",
       },
       { property: "og:title", content: "Biblioteca Proibida" },
       {
         property: "og:description",
-        content: "Acervo digital de livros apócrifos com compra individual.",
+        content: "Acervo digital gratuito de livros apócrifos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

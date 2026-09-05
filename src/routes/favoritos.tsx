@@ -13,10 +13,12 @@ export const Route = createFileRoute("/favoritos")({
       { title: "Meus Favoritos — Biblioteca Proibida" },
       {
         name: "description",
-        content: "Os títulos que você salvou para ler ou comprar depois no acervo digital.",
+        content: "Os títulos gratuitos que você salvou para ler depois no acervo digital.",
       },
       { property: "og:title", content: "Meus Favoritos — Biblioteca Proibida" },
       { property: "og:description", content: "Sua lista pessoal de títulos salvos." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Favoritos,
@@ -54,18 +56,17 @@ function Favoritos() {
             </Button>
           </div>
         ) : (
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 space-y-4">
             {list.map((book) => (
               <BookCard
                 key={book.id}
                 book={book}
                 isFavorite
-                owned={owned.has(book.id)}
-                inCart={cart.has(book.id)}
+                inLibrary={cart.has(book.id) || owned.has(book.id)}
                 onToggleFavorite={(b) => toggleFavorite.mutate({ bookId: b.id, isFavorite: true })}
-                onAddToCart={(b) => {
+                onAddToLibrary={(b) => {
                   cart.add(b.id);
-                  toast.success(`${b.title} adicionado ao carrinho.`);
+                  toast.success(`${b.title} adicionado à sua biblioteca.`);
                 }}
               />
             ))}

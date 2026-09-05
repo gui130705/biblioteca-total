@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart, Menu, ShoppingCart, User } from "lucide-react";
+import { BookOpen, Heart, Library, Menu, User } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
@@ -53,9 +53,9 @@ export function SiteHeader() {
               <Heart className="size-4" />
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" asChild aria-label="Carrinho" className="relative">
+          <Button variant="ghost" size="icon" asChild aria-label="Minha biblioteca" className="relative">
             <Link to="/carrinho">
-              <ShoppingCart className="size-4" />
+              <Library className="size-4" />
               {cart.count > 0 ? (
                 <span className="absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                   {cart.count}
