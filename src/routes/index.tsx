@@ -15,13 +15,15 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Explore o acervo digital de livros apócrifos: busca, categorias, favoritos e compra individual por título.",
+          "Explore gratuitamente um acervo digital de livros apócrifos com busca, categorias, favoritos e biblioteca pessoal.",
       },
       { property: "og:title", content: "Biblioteca Proibida — Acervo digital" },
       {
         property: "og:description",
-        content: "Livros apócrifos e textos esquecidos com compra individual.",
+        content: "Livros apócrifos e textos esquecidos com acesso gratuito.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
@@ -51,7 +53,7 @@ function Index() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-muted-foreground">
             Textos apócrifos, escritos esquecidos e traduções raras reunidos em um acervo digital
-            organizado. Compre apenas os títulos que quiser ler.
+            organizado. Escolha seus títulos e leia gratuitamente.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Button size="lg" asChild>
@@ -72,7 +74,7 @@ function Index() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-3">
         {[
           { icon: BookOpen, title: "Leitura organizada", text: "Categorias, busca e detalhes completos de cada obra." },
-          { icon: ShieldCheck, title: "Compra individual", text: "Pague só pelos títulos que quiser, sem assinatura." },
+          { icon: ShieldCheck, title: "Acesso gratuito", text: "Leia os títulos disponíveis sem cobrança ou assinatura." },
           { icon: Sparkles, title: "Acervo curado", text: "Textos raros com sinopses, avaliações e contexto histórico." },
         ].map(({ icon: Icon, title, text }) => (
           <div key={title} className="rounded-xl border border-border bg-card p-6">
@@ -92,20 +94,19 @@ function Index() {
         </div>
 
         {isLoading ? (
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 space-y-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="h-80 animate-pulse rounded-xl border border-border bg-card/60" />
             ))}
           </div>
         ) : (
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 space-y-4">
             {showcase.map((book) => (
               <BookCard
                 key={book.id}
                 book={book}
                 isFavorite={favorites.includes(book.id)}
-                owned={owned.has(book.id)}
-                inCart={cart.has(book.id)}
+                inLibrary={cart.has(book.id) || owned.has(book.id)}
                 onToggleFavorite={(b) => {
                   if (!user) {
                     toast.error("Entre na sua conta para favoritar.");
@@ -113,9 +114,9 @@ function Index() {
                   }
                   toggleFavorite.mutate({ bookId: b.id, isFavorite: favorites.includes(b.id) });
                 }}
-                onAddToCart={(b) => {
+                onAddToLibrary={(b) => {
                   cart.add(b.id);
-                  toast.success(`${b.title} adicionado ao carrinho.`);
+                  toast.success(`${b.title} adicionado à sua biblioteca.`);
                 }}
               />
             ))}

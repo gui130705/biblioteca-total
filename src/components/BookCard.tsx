@@ -1,38 +1,36 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart, ShoppingCart, Star } from "lucide-react";
+import { BookOpen, Heart, Library, Star } from "lucide-react";
 import { BookCover } from "@/components/BookCover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatPrice, type Book } from "@/lib/books";
+import { type Book } from "@/lib/books";
 import { cn } from "@/lib/utils";
 
 export function BookCard({
   book,
   isFavorite,
-  owned,
-  inCart,
+  inLibrary,
   onToggleFavorite,
-  onAddToCart,
+  onAddToLibrary,
 }: {
   book: Book;
   isFavorite: boolean;
-  owned: boolean;
-  inCart: boolean;
+  inLibrary: boolean;
   onToggleFavorite: (book: Book) => void;
-  onAddToCart: (book: Book) => void;
+  onAddToLibrary: (book: Book) => void;
 }) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/60">
-      <Link to="/livro/$slug" params={{ slug: book.slug }} className="block p-3">
+    <article className="group grid grid-cols-[104px_minmax(0,1fr)] gap-4 overflow-hidden rounded-lg border border-border bg-card p-3 transition-colors hover:border-primary/60 sm:grid-cols-[148px_minmax(0,1fr)] sm:gap-6 sm:p-4">
+      <Link to="/livro/$slug" params={{ slug: book.slug }} className="block self-stretch">
         <BookCover
           title={book.title.replace(/^Livro d[eoa] /i, "")}
           subtitle={book.subtitle}
           theme={book.cover_theme}
-          className="h-52 w-full transition-transform group-hover:scale-[1.02]"
+          className="h-full min-h-40 w-full transition-transform group-hover:scale-[1.02] sm:min-h-52"
         />
       </Link>
 
-      <div className="flex flex-1 flex-col px-4 pb-4">
+      <div className="flex min-w-0 flex-col py-1 sm:py-2">
         <div className="flex items-center justify-between gap-2">
           <Badge variant="secondary" className="text-[10px]">
             {book.category}
@@ -44,15 +42,13 @@ export function BookCard({
         </div>
 
         <Link to="/livro/$slug" params={{ slug: book.slug }} className="mt-2">
-          <h3 className="font-display text-base font-bold hover:text-primary">{book.title}</h3>
+          <h3 className="font-display text-base font-bold hover:text-primary sm:text-xl">{book.title}</h3>
         </Link>
-        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{book.short_description}</p>
+        <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">{book.short_description}</p>
 
         <div className="mt-auto pt-4">
-          <div className="flex items-center justify-between">
-            <span className="font-display text-lg font-bold text-gold">
-              {formatPrice(book.price_cents, book.currency)}
-            </span>
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-display text-lg font-bold text-gold">Grátis</span>
             <Button
               variant="ghost"
               size="icon"
@@ -62,7 +58,7 @@ export function BookCard({
               <Heart className={cn("size-4", isFavorite && "fill-primary text-primary")} />
             </Button>
           </div>
-          {owned ? (
+          {inLibrary ? (
             <Button className="mt-3 w-full" variant="secondary" asChild>
               <Link to="/livro/$slug" params={{ slug: book.slug }}>
                 <BookOpen className="size-4" />
@@ -72,11 +68,10 @@ export function BookCard({
           ) : (
             <Button
               className="mt-3 w-full"
-              onClick={() => onAddToCart(book)}
-              disabled={inCart}
+              onClick={() => onAddToLibrary(book)}
             >
-              <ShoppingCart className="size-4" />
-              {inCart ? "No carrinho" : "Comprar"}
+              <Library className="size-4" />
+              Adicionar à biblioteca
             </Button>
           )}
         </div>
