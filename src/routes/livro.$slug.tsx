@@ -6,7 +6,7 @@ import { BookCover } from "@/components/BookCover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useBook, useFavorites, useOwnedBookIds, useToggleFavorite } from "@/lib/library";
+import { useBook, useFavorites, useToggleFavorite } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
@@ -36,7 +36,6 @@ function BookDetail() {
   const { data: book, isLoading } = useBook(slug);
   const { data: favorites = [] } = useFavorites();
   const toggleFavorite = useToggleFavorite();
-  const owned = useOwnedBookIds();
   const cart = useCart();
   const { user } = useAuth();
 
@@ -67,7 +66,7 @@ function BookDetail() {
   }
 
   const isFavorite = favorites.includes(book.id);
-  const isOwned = owned.has(book.id);
+  const isInLibrary = cart.has(book.id);
 
   return (
     <PageShell>
@@ -145,7 +144,7 @@ function BookDetail() {
                     <Heart className={cn("size-4", isFavorite && "fill-primary text-primary")} />
                     {isFavorite ? "Nos favoritos" : "Favoritar"}
                   </Button>
-                  {isOwned ? (
+                  {isInLibrary ? (
                       <Button asChild>
                         <Link to="/carrinho">
                       <BookOpen className="size-4" />

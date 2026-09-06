@@ -64,35 +64,34 @@ function Admin() {
 
         <ul className="mt-8 space-y-3">
           {books.map((book) => (
-              <li
-                key={book.id}
-                className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4"
+            <li
+              key={book.id}
+              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-lg border border-border bg-card p-4 sm:flex"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">{book.title}</p>
+                <p className="text-xs text-muted-foreground">{book.category} · acesso grátis</p>
+              </div>
+              <Badge variant={book.is_published ? "default" : "secondary"}>
+                {book.is_published ? "Publicado" : "Rascunho"}
+              </Badge>
+              <Button
+                className="col-span-2 sm:col-span-1"
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  upsert.mutate(
+                    { id: book.id, is_published: !book.is_published },
+                    {
+                      onSuccess: () => toast.success("Visibilidade atualizada."),
+                      onError: () => toast.error("Não foi possível atualizar."),
+                    },
+                  )
+                }
               >
-                <div className="min-w-48 flex-1">
-                  <p className="font-medium">{book.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {book.category} · acesso grátis
-                  </p>
-                </div>
-                <Badge variant={book.is_published ? "default" : "secondary"}>
-                  {book.is_published ? "Publicado" : "Rascunho"}
-                </Badge>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    upsert.mutate(
-                      { id: book.id, is_published: !book.is_published },
-                      {
-                        onSuccess: () => toast.success("Visibilidade atualizada."),
-                        onError: () => toast.error("Não foi possível atualizar."),
-                      },
-                    )
-                  }
-                >
-                  {book.is_published ? "Despublicar" : "Publicar"}
-                </Button>
-              </li>
+                {book.is_published ? "Despublicar" : "Publicar"}
+              </Button>
+            </li>
           ))}
         </ul>
       </div>
