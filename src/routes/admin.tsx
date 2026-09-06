@@ -1,13 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useBooks, useUpsertBook } from "@/lib/library";
-import { formatPrice } from "@/lib/books";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -15,10 +12,12 @@ export const Route = createFileRoute("/admin")({
       { title: "Administração do Catálogo — Biblioteca Proibida" },
       {
         name: "description",
-        content: "Gerencie títulos, preços e publicação dos livros do acervo digital.",
+        content: "Gerencie os títulos e a publicação dos livros gratuitos do acervo digital.",
       },
       { property: "og:title", content: "Administração — Biblioteca Proibida" },
-      { property: "og:description", content: "Gestão de catálogo e preços." },
+      { property: "og:description", content: "Gestão do catálogo gratuito." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Admin,
@@ -28,7 +27,6 @@ function Admin() {
   const { isAdmin, user, loading } = useAuth();
   const { data: books = [] } = useBooks(true);
   const upsert = useUpsertBook();
-  const [prices, setPrices] = useState<Record<string, string>>({});
 
   if (loading) {
     return (
@@ -61,13 +59,11 @@ function Admin() {
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
         <h1 className="font-display text-3xl font-bold sm:text-4xl">Administração do catálogo</h1>
         <p className="mt-2 text-muted-foreground">
-          Ajuste preços e visibilidade dos títulos. Preços em reais, aplicados ao checkout.
+          Controle a visibilidade dos títulos. Todo o acervo atual está disponível gratuitamente.
         </p>
 
         <ul className="mt-8 space-y-3">
-          {books.map((book) => {
-            const draft = prices[book.id] ?? (book.price_cents / 100).toFixed(2);
-            return (
+          {books.map((book) => (
               <li
                 key={book.id}
                 className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card p-4"
@@ -75,37 +71,12 @@ function Admin() {
                 <div className="min-w-48 flex-1">
                   <p className="font-medium">{book.title}</p>
                   <p className="text-xs text-muted-foreground">
-                    {book.category} · atual {formatPrice(book.price_cents, book.currency)}
+                    {book.category} · acesso grátis
                   </p>
                 </div>
                 <Badge variant={book.is_published ? "default" : "secondary"}>
                   {book.is_published ? "Publicado" : "Rascunho"}
                 </Badge>
-                <Input
-                  className="w-28"
-                  inputMode="decimal"
-                  value={draft}
-                  onChange={(e) => setPrices((prev) => ({ ...prev, [book.id]: e.target.value }))}
-                />
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    const value = Math.round(Number(draft.replace(",", ".")) * 100);
-                    if (!Number.isFinite(value) || value < 0) {
-                      toast.error("Preço inválido.");
-                      return;
-                    }
-                    upsert.mutate(
-                      { id: book.id, price_cents: value },
-                      {
-                        onSuccess: () => toast.success("Preço atualizado."),
-                        onError: () => toast.error("Não foi possível atualizar."),
-                      },
-                    );
-                  }}
-                >
-                  Salvar
-                </Button>
                 <Button
                   size="sm"
                   variant="outline"
@@ -122,8 +93,7 @@ function Admin() {
                   {book.is_published ? "Despublicar" : "Publicar"}
                 </Button>
               </li>
-            );
-          })}
+          ))}
         </ul>
       </div>
     </PageShell>
