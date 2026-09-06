@@ -1,0 +1,1 @@
+UPDATE public.books SET price_cents = 0 WHERE price_cents <> 0;

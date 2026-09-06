@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
-const STORAGE_KEY = "biblioteca-proibida-cart";
+const STORAGE_KEY = "biblioteca-proibida-cart"; // Mantido para preservar bibliotecas já salvas.
 
 type CartContextValue = {
   items: string[];

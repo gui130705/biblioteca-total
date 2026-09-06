@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { BookCard } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
-import { useBooks, useFavorites, useOwnedBookIds, useToggleFavorite } from "@/lib/library";
+import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -33,7 +33,6 @@ function Index() {
   const { data: books = [], isLoading } = useBooks();
   const { data: favorites = [] } = useFavorites();
   const toggleFavorite = useToggleFavorite();
-  const owned = useOwnedBookIds();
   const cart = useCart();
   const { user } = useAuth();
 
@@ -106,7 +105,7 @@ function Index() {
                 key={book.id}
                 book={book}
                 isFavorite={favorites.includes(book.id)}
-                inLibrary={cart.has(book.id) || owned.has(book.id)}
+                inLibrary={cart.has(book.id)}
                 onToggleFavorite={(b) => {
                   if (!user) {
                     toast.error("Entre na sua conta para favoritar.");

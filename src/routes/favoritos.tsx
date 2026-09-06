@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { BookCard } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
-import { useBooks, useFavorites, useOwnedBookIds, useToggleFavorite } from "@/lib/library";
+import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -29,7 +29,6 @@ function Favoritos() {
   const { data: books = [] } = useBooks();
   const { data: favorites = [] } = useFavorites();
   const toggleFavorite = useToggleFavorite();
-  const owned = useOwnedBookIds();
   const cart = useCart();
 
   const list = books.filter((b) => favorites.includes(b.id));
@@ -62,7 +61,7 @@ function Favoritos() {
                 key={book.id}
                 book={book}
                 isFavorite
-                inLibrary={cart.has(book.id) || owned.has(book.id)}
+                inLibrary={cart.has(book.id)}
                 onToggleFavorite={(b) => toggleFavorite.mutate({ bookId: b.id, isFavorite: true })}
                 onAddToLibrary={(b) => {
                   cart.add(b.id);

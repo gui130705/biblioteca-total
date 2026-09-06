@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useBooks, useFavorites, useOwnedBookIds, useToggleFavorite } from "@/lib/library";
+import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/catalogo")({
       {
         name: "description",
         content:
-          "Busque por título, filtre por categoria e ordene por preço ou avaliação no acervo digital.",
+          "Busque por título, filtre por categoria e explore gratuitamente o acervo digital.",
       },
       { property: "og:title", content: "Catálogo — Biblioteca Proibida" },
       { property: "og:description", content: "Todos os títulos do acervo com acesso gratuito." },
@@ -39,7 +39,6 @@ function Catalogo() {
   const { data: books = [], isLoading } = useBooks();
   const { data: favorites = [] } = useFavorites();
   const toggleFavorite = useToggleFavorite();
-  const owned = useOwnedBookIds();
   const cart = useCart();
   const { user } = useAuth();
 
@@ -138,7 +137,7 @@ function Catalogo() {
                 key={book.id}
                 book={book}
                 isFavorite={favorites.includes(book.id)}
-                inLibrary={cart.has(book.id) || owned.has(book.id)}
+                inLibrary={cart.has(book.id)}
                 onToggleFavorite={(b) => {
                   if (!user) {
                     toast.error("Entre na sua conta para favoritar.");
