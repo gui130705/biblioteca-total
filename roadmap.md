@@ -7,4 +7,4 @@
 - [x] Converter cards de livros para lista horizontal responsiva
 - [x] Liberar gratuitamente todos os títulos e remover compra/checkout pago da experiência
 - [x] Atualizar detalhes, biblioteca, carrinho e mensagens para acesso grátis
-- [ ] Validar visualmente as rotas principais e manter o build aprovado
+- [x] Validar visualmente as rotas principais e manter o build aprovado
