@@ -65,8 +65,24 @@ function Catalogo() {
     const sorted = [...filtered];
     if (sort === "titulo") sorted.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
     if (sort === "avaliacao") sorted.sort((a, b) => b.rating - a.rating);
+    if (sort === "destaques")
+      sorted.sort(
+        (a, b) =>
+          Number(b.is_featured) - Number(a.is_featured) ||
+          a.title.localeCompare(b.title, "pt-BR"),
+      );
     return sorted;
   }, [books, term, category, sort]);
+
+  const groups = useMemo(() => {
+    const map = new Map<string, typeof list>();
+    for (const book of list) {
+      const bucket = map.get(book.category);
+      if (bucket) bucket.push(book);
+      else map.set(book.category, [book]);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0], "pt-BR"));
+  }, [list]);
 
   return (
     <PageShell>

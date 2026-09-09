@@ -16,6 +16,7 @@ import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as LerSlugRouteImport } from './routes/ler.$slug'
 import { Route as LivroSlugRouteImport } from './routes/livro.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +54,11 @@ const FavoritosRoute = FavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LerSlugRoute = LerSlugRouteImport.update({
+  id: '/ler/$slug',
+  path: '/ler/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LivroSlugRoute = LivroSlugRouteImport.update({
   id: '/livro/$slug',
   path: '/livro/$slug',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof CatalogoRoute
   '/conta': typeof ContaRoute
   '/favoritos': typeof FavoritosRoute
+  '/ler/$slug': typeof LerSlugRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/catalogo': typeof CatalogoRoute
   '/conta': typeof ContaRoute
   '/favoritos': typeof FavoritosRoute
+  '/ler/$slug': typeof LerSlugRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/catalogo': typeof CatalogoRoute
   '/conta': typeof ContaRoute
   '/favoritos': typeof FavoritosRoute
+  '/ler/$slug': typeof LerSlugRoute
   '/livro/$slug': typeof LivroSlugRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/conta'
     | '/favoritos'
+    | '/ler/$slug'
     | '/livro/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/conta'
     | '/favoritos'
+    | '/ler/$slug'
     | '/livro/$slug'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/conta'
     | '/favoritos'
+    | '/ler/$slug'
     | '/livro/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   ContaRoute: typeof ContaRoute
   FavoritosRoute: typeof FavoritosRoute
+  LerSlugRoute: typeof LerSlugRoute
   LivroSlugRoute: typeof LivroSlugRoute
 }
 
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ler/$slug': {
+      id: '/ler/$slug'
+      path: '/ler/$slug'
+      fullPath: '/ler/$slug'
+      preLoaderRoute: typeof LerSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/livro/$slug': {
       id: '/livro/$slug'
       path: '/livro/$slug'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   ContaRoute: ContaRoute,
   FavoritosRoute: FavoritosRoute,
+  LerSlugRoute: LerSlugRoute,
   LivroSlugRoute: LivroSlugRoute,
 }
 export const routeTree = rootRouteImport
