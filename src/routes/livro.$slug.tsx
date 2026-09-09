@@ -147,31 +147,31 @@ function BookDetail() {
                     <Heart className={cn("size-4", isFavorite && "fill-primary text-primary")} />
                     {isFavorite ? "Nos favoritos" : "Favoritar"}
                   </Button>
-                  {isInLibrary ? (
-                      <Button asChild>
-                        <Link to="/carrinho">
-                      <BookOpen className="size-4" />
-                        Ler agora
-                        </Link>
+                  {book.pdf_url ? (
+                    <Button variant="outline" asChild>
+                      <a href={book.pdf_url} download>
+                        <Download className="size-4" />
+                        Baixar PDF
+                      </a>
                     </Button>
-                  ) : (
-                    <>
-                      <Button
-                        variant="secondary"
-                        onClick={() => {
-                          cart.add(book.id);
-                          toast.success("Adicionado à sua biblioteca.");
-                        }}
-                        disabled={cart.has(book.id)}
-                      >
-                        <Library className="size-4" />
-                        {cart.has(book.id) ? "Na biblioteca" : "Adicionar à biblioteca"}
-                      </Button>
-                      <Button asChild>
-                        <Link to="/carrinho">Ver minha biblioteca</Link>
-                      </Button>
-                    </>
-                  )}
+                  ) : null}
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      cart.add(book.id);
+                      toast.success("Adicionado à sua biblioteca.");
+                    }}
+                    disabled={isInLibrary}
+                  >
+                    <Library className="size-4" />
+                    {isInLibrary ? "Na biblioteca" : "Adicionar à biblioteca"}
+                  </Button>
+                  <Button asChild>
+                    <Link to="/ler/$slug" params={{ slug: book.slug }}>
+                      <BookOpen className="size-4" />
+                      Ler agora
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
