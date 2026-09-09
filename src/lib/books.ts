@@ -3,6 +3,8 @@ export type Book = {
   slug: string;
   title: string;
   subtitle: string | null;
+  author: string | null;
+  pdf_url: string | null;
   short_description: string | null;
   long_description: string | null;
   category: string;
