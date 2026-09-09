@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart, Library, Star } from "lucide-react";
+import { BookOpen, Download, Heart, Library, Star } from "lucide-react";
 import { BookCover } from "@/components/BookCover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
