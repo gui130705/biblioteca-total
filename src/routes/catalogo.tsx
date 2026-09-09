@@ -148,27 +148,44 @@ function Catalogo() {
             </Button>
           </div>
         ) : (
-          <div className="mt-10 space-y-4">
-            {list.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                isFavorite={favorites.includes(book.id)}
-                inLibrary={cart.has(book.id)}
-                onToggleFavorite={(b) => {
-                  if (!user) {
-                    toast.error("Entre na sua conta para favoritar.");
-                    return;
-                  }
-                  toggleFavorite.mutate({ bookId: b.id, isFavorite: favorites.includes(b.id) });
-                }}
-                onAddToLibrary={(b) => {
-                  cart.add(b.id);
-                  toast.success(`${b.title} adicionado à sua biblioteca.`);
-                }}
-              />
+          <div className="mt-10 space-y-12">
+            {groups.map(([groupName, groupBooks]) => (
+              <section key={groupName}>
+                <div className="flex items-baseline gap-3 border-b border-border pb-3">
+                  <h2 className="font-display text-xl font-bold sm:text-2xl">{groupName}</h2>
+                  <span className="text-xs text-muted-foreground">
+                    {groupBooks.length} {groupBooks.length === 1 ? "título" : "títulos"}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-4">
+                  {groupBooks.map((book) => (
+                    <BookCard
+                      key={book.id}
+                      book={book}
+                      isFavorite={favorites.includes(book.id)}
+                      inLibrary={cart.has(book.id)}
+                      onToggleFavorite={(b) => {
+                        if (!user) {
+                          toast.error("Entre na sua conta para favoritar.");
+                          return;
+                        }
+                        toggleFavorite.mutate({
+                          bookId: b.id,
+                          isFavorite: favorites.includes(b.id),
+                        });
+                      }}
+                      onAddToLibrary={(b) => {
+                        cart.add(b.id);
+                        toast.success(`${b.title} adicionado à sua biblioteca.`);
+                      }}
+                    />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
+        )}
+        {!isLoading && list.length > 0 ? null : null
         )}
       </div>
     </PageShell>
