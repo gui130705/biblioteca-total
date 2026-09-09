@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       books: {
         Row: {
+          author: string | null
           category: string
           cover_theme: string
           created_at: string
@@ -26,6 +27,7 @@ export type Database = {
           language: string
           long_description: string | null
           pages: number | null
+          pdf_url: string | null
           price_cents: number
           rating: number
           short_description: string | null
@@ -37,6 +39,7 @@ export type Database = {
           year: string | null
         }
         Insert: {
+          author?: string | null
           category?: string
           cover_theme?: string
           created_at?: string
@@ -47,6 +50,7 @@ export type Database = {
           language?: string
           long_description?: string | null
           pages?: number | null
+          pdf_url?: string | null
           price_cents?: number
           rating?: number
           short_description?: string | null
@@ -58,6 +62,7 @@ export type Database = {
           year?: string | null
         }
         Update: {
+          author?: string | null
           category?: string
           cover_theme?: string
           created_at?: string
@@ -68,6 +73,7 @@ export type Database = {
           language?: string
           long_description?: string | null
           pages?: number | null
+          pdf_url?: string | null
           price_cents?: number
           rating?: number
           short_description?: string | null
