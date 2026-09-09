@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Heart, Library, Star } from "lucide-react";
+import { BookOpen, Download, Heart, Library, Star } from "lucide-react";
 import { BookCover } from "@/components/BookCover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,36 +44,50 @@ export function BookCard({
         <Link to="/livro/$slug" params={{ slug: book.slug }} className="mt-2">
           <h3 className="font-display text-base font-bold hover:text-primary sm:text-xl">{book.title}</h3>
         </Link>
+        {book.author ? (
+          <p className="mt-1 text-[11px] text-muted-foreground sm:text-xs">{book.author}</p>
+        ) : null}
         <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-muted-foreground sm:text-sm">{book.short_description}</p>
 
         <div className="mt-auto pt-4">
           <div className="flex items-center justify-between gap-2">
             <span className="font-display text-lg font-bold text-gold">Grátis</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Favoritar"
-              onClick={() => onToggleFavorite(book)}
-            >
-              <Heart className={cn("size-4", isFavorite && "fill-primary text-primary")} />
-            </Button>
+            <div className="flex items-center gap-1">
+              {book.pdf_url ? (
+                <Button variant="ghost" size="icon" aria-label="Baixar PDF" asChild>
+                  <a href={book.pdf_url} download>
+                    <Download className="size-4" />
+                  </a>
+                </Button>
+              ) : null}
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Favoritar"
+                onClick={() => onToggleFavorite(book)}
+              >
+                <Heart className={cn("size-4", isFavorite && "fill-primary text-primary")} />
+              </Button>
+            </div>
           </div>
-          {inLibrary ? (
-            <Button className="mt-3 w-full" variant="secondary" asChild>
-              <Link to="/livro/$slug" params={{ slug: book.slug }}>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <Button className="w-full sm:flex-1" asChild>
+              <Link to="/ler/$slug" params={{ slug: book.slug }}>
                 <BookOpen className="size-4" />
                 Ler agora
               </Link>
             </Button>
-          ) : (
-            <Button
-              className="mt-3 w-full"
-              onClick={() => onAddToLibrary(book)}
-            >
-              <Library className="size-4" />
-              Adicionar à biblioteca
-            </Button>
-          )}
+            {!inLibrary ? (
+              <Button
+                variant="secondary"
+                className="w-full sm:flex-1"
+                onClick={() => onAddToLibrary(book)}
+              >
+                <Library className="size-4" />
+                Adicionar
+              </Button>
+            ) : null}
+          </div>
         </div>
       </div>
     </article>

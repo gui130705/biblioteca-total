@@ -69,7 +69,7 @@ function Carrinho() {
                   </div>
                    <span className="hidden font-semibold text-gold sm:block">Grátis</span>
                    <Button size="sm" asChild className="hidden sm:inline-flex">
-                     <Link to="/livro/$slug" params={{ slug: book.slug }}>
+                     <Link to="/ler/$slug" params={{ slug: book.slug }}>
                        <BookOpen className="size-4" />
                        Ler agora
                      </Link>

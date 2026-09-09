@@ -63,10 +63,27 @@ function Catalogo() {
       return matchesTerm && matchesCategory;
     });
     const sorted = [...filtered];
-    if (sort === "titulo") sorted.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+    if (sort === "padrao" || sort === "titulo")
+      sorted.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
     if (sort === "avaliacao") sorted.sort((a, b) => b.rating - a.rating);
+    if (sort === "destaques")
+      sorted.sort(
+        (a, b) =>
+          Number(b.is_featured) - Number(a.is_featured) ||
+          a.title.localeCompare(b.title, "pt-BR"),
+      );
     return sorted;
   }, [books, term, category, sort]);
+
+  const groups = useMemo(() => {
+    const map = new Map<string, typeof list>();
+    for (const book of list) {
+      const bucket = map.get(book.category);
+      if (bucket) bucket.push(book);
+      else map.set(book.category, [book]);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0], "pt-BR"));
+  }, [list]);
 
   return (
     <PageShell>
@@ -103,8 +120,8 @@ function Catalogo() {
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="padrao">Ordem do acervo</SelectItem>
-              <SelectItem value="titulo">Título (A-Z)</SelectItem>
+              <SelectItem value="padrao">Título (A-Z)</SelectItem>
+              <SelectItem value="destaques">Destaques primeiro</SelectItem>
               <SelectItem value="avaliacao">Melhor avaliação</SelectItem>
             </SelectContent>
           </Select>
@@ -131,25 +148,40 @@ function Catalogo() {
             </Button>
           </div>
         ) : (
-          <div className="mt-10 space-y-4">
-            {list.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                isFavorite={favorites.includes(book.id)}
-                inLibrary={cart.has(book.id)}
-                onToggleFavorite={(b) => {
-                  if (!user) {
-                    toast.error("Entre na sua conta para favoritar.");
-                    return;
-                  }
-                  toggleFavorite.mutate({ bookId: b.id, isFavorite: favorites.includes(b.id) });
-                }}
-                onAddToLibrary={(b) => {
-                  cart.add(b.id);
-                  toast.success(`${b.title} adicionado à sua biblioteca.`);
-                }}
-              />
+          <div className="mt-10 space-y-12">
+            {groups.map(([groupName, groupBooks]) => (
+              <section key={groupName}>
+                <div className="flex items-baseline gap-3 border-b border-border pb-3">
+                  <h2 className="font-display text-xl font-bold sm:text-2xl">{groupName}</h2>
+                  <span className="text-xs text-muted-foreground">
+                    {groupBooks.length} {groupBooks.length === 1 ? "título" : "títulos"}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-4">
+                  {groupBooks.map((book) => (
+                    <BookCard
+                      key={book.id}
+                      book={book}
+                      isFavorite={favorites.includes(book.id)}
+                      inLibrary={cart.has(book.id)}
+                      onToggleFavorite={(b) => {
+                        if (!user) {
+                          toast.error("Entre na sua conta para favoritar.");
+                          return;
+                        }
+                        toggleFavorite.mutate({
+                          bookId: b.id,
+                          isFavorite: favorites.includes(b.id),
+                        });
+                      }}
+                      onAddToLibrary={(b) => {
+                        cart.add(b.id);
+                        toast.success(`${b.title} adicionado à sua biblioteca.`);
+                      }}
+                    />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         )}
