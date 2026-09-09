@@ -21,7 +21,7 @@ export type Book = {
 };
 
 export const BOOK_COLUMNS =
-  "id, slug, title, subtitle, short_description, long_description, category, cover_theme, price_cents, currency, rating, pages, language, year, is_featured, is_published, sort_order";
+  "id, slug, title, subtitle, author, pdf_url, short_description, long_description, category, cover_theme, price_cents, currency, rating, pages, language, year, is_featured, is_published, sort_order";
 
 export const COVER_THEMES: Record<string, { from: string; to: string; accent: string }> = {
   crimson: { from: "#3b0a0a", to: "#7f1d1d", accent: "#f5c542" },
