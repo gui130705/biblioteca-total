@@ -185,8 +185,6 @@ function Catalogo() {
             ))}
           </div>
         )}
-        {!isLoading && list.length > 0 ? null : null
-        )}
       </div>
     </PageShell>
   );
