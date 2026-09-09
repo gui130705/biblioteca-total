@@ -63,7 +63,8 @@ function Catalogo() {
       return matchesTerm && matchesCategory;
     });
     const sorted = [...filtered];
-    if (sort === "titulo") sorted.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
+    if (sort === "padrao" || sort === "titulo")
+      sorted.sort((a, b) => a.title.localeCompare(b.title, "pt-BR"));
     if (sort === "avaliacao") sorted.sort((a, b) => b.rating - a.rating);
     if (sort === "destaques")
       sorted.sort(
