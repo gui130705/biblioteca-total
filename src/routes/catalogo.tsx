@@ -119,8 +119,8 @@ function Catalogo() {
               <SelectValue placeholder="Ordenar" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="padrao">Ordem do acervo</SelectItem>
-              <SelectItem value="titulo">Título (A-Z)</SelectItem>
+              <SelectItem value="padrao">Título (A-Z)</SelectItem>
+              <SelectItem value="destaques">Destaques primeiro</SelectItem>
               <SelectItem value="avaliacao">Melhor avaliação</SelectItem>
             </SelectContent>
           </Select>
