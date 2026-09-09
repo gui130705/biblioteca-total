@@ -101,6 +101,9 @@ function BookDetail() {
                 {book.subtitle}
               </p>
             ) : null}
+            {book.author ? (
+              <p className="mt-3 text-sm text-muted-foreground">{book.author}</p>
+            ) : null}
 
             <p className="mt-6 leading-relaxed text-muted-foreground">
               {book.long_description ?? book.short_description}
