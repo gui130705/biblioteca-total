@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { BookCard } from "@/components/BookCard";
 import { ShelfRow } from "@/components/ShelfRow";
+import { NowReadingCard } from "@/components/NowReadingCard";
 import { Button } from "@/components/ui/button";
 import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
 import { useReadingProgress } from "@/lib/reading";
@@ -78,20 +79,26 @@ function Index() {
         </div>
       </section>
 
-      {reading.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6">
-          <div className="flex items-end justify-between">
+      {reading.length > 0 && reading[0] ? (
+        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+          <div className="mb-4 flex items-end justify-between">
             <h2 className="font-display text-2xl font-bold sm:text-3xl">Continuar lendo</h2>
             <Button variant="ghost" asChild>
               <Link to="/carrinho">Minha estante</Link>
             </Button>
           </div>
-          <ShelfRow
-            title="Em andamento"
-            books={reading}
-            progressFor={(id) => progress.find((p) => p.book_id === id) ?? null}
-            empty=""
+          <NowReadingCard
+            book={reading[0]}
+            percent={progress.find((p) => p.book_id === reading[0]!.id)?.percent ?? 0}
           />
+          {reading.length > 1 ? (
+            <ShelfRow
+              title="Também em andamento"
+              books={reading.slice(1)}
+              progressFor={(id) => progress.find((p) => p.book_id === id) ?? null}
+              empty=""
+            />
+          ) : null}
         </section>
       ) : null}
 

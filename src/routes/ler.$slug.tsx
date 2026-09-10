@@ -10,8 +10,14 @@ import {
   Download,
   Highlighter,
   List,
+  Maximize2,
+  Minimize2,
+  Minus,
+  Moon,
+  Plus,
   Settings2,
   StickyNote,
+  Sun,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -97,7 +103,10 @@ function Reader() {
     end: number;
   } | null>(null);
   const [note, setNote] = useState("");
+  const [barHidden, setBarHidden] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const lastScroll = useRef(0);
 
   const chapter = content?.chapters[chapterIndex];
 
@@ -114,13 +123,43 @@ function Reader() {
 
   useEffect(() => {
     const onScroll = () => {
+      const y = window.scrollY;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setRatio(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      setRatio(max > 0 ? Math.min(1, Math.max(0, y / max)) : 0);
+      const delta = y - lastScroll.current;
+      if (y < 80) setBarHidden(false);
+      else if (delta > 8) setBarHidden(true);
+      else if (delta < -8) setBarHidden(false);
+      lastScroll.current = y;
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const onMove = (e: MouseEvent) => {
+      if (e.clientY < 70) setBarHidden(false);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("mousemove", onMove);
+    };
   }, [chapterIndex, content]);
+
+  const toggleFocus = useCallback(() => {
+    const el = document.documentElement;
+    if (!document.fullscreenElement) {
+      void el.requestFullscreen?.().catch(() => {});
+      setFocusMode(true);
+    } else {
+      void document.exitFullscreen?.().catch(() => {});
+      setFocusMode(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setFocusMode(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   const percent = useMemo(
     () => (content ? computePercent(content, chapterIndex, ratio) : 0),
@@ -245,20 +284,71 @@ function Reader() {
         <div className="h-full bg-primary transition-[width]" style={{ width: `${percent}%` }} />
       </div>
 
-      <header className="reader-bar sticky top-0 z-30 border-b backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center gap-2 px-3 py-2 sm:px-6">
+      <header
+        className={cn(
+          "reader-bar fixed inset-x-0 top-0 z-30 transition-all duration-300",
+          barHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100",
+        )}
+        onMouseEnter={() => setBarHidden(false)}
+      >
+        <div className="mx-auto flex max-w-5xl items-center gap-1 px-3 py-2 sm:px-6">
           <Button variant="ghost" size="icon" asChild aria-label="Voltar">
             <Link to="/livro/$slug" params={{ slug: book.slug }}>
               <ArrowLeft className="size-4" />
             </Link>
           </Button>
 
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{book.title}</p>
-            <p className="truncate text-xs opacity-70">
-              {chapter.title} · {percent}% lido · {formatMinutes(remaining)} restantes
+          <div className="min-w-0 flex-1 text-center sm:text-left">
+            <p className="truncate text-[13px] font-medium">{book.title}</p>
+            <p className="truncate text-[11px] opacity-55">
+              {chapter.title} · {percent}% · {formatMinutes(remaining)} restantes
             </p>
           </div>
+
+          <div className="mr-1 hidden items-center gap-0.5 rounded-full border border-current/15 px-1 py-0.5 sm:flex">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label="Diminuir texto"
+              onClick={() => update({ fontSize: Math.max(15, prefs.fontSize - 1) })}
+            >
+              <Minus className="size-3.5" />
+            </Button>
+            <span className="text-[11px] opacity-60">A</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label="Aumentar texto"
+              onClick={() => update({ fontSize: Math.min(28, prefs.fontSize + 1) })}
+            >
+              <Plus className="size-3.5" />
+            </Button>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Alternar tema de leitura"
+            onClick={() => {
+              const order: ReaderTheme[] = ["escuro", "sepia", "papel"];
+              const next = order[(order.indexOf(prefs.theme) + 1) % order.length]!;
+              update({ theme: next });
+            }}
+          >
+            {prefs.theme === "escuro" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Modo foco em tela cheia"
+            onClick={toggleFocus}
+          >
+            {focusMode ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+          </Button>
+
 
           <Sheet open={tocOpen} onOpenChange={setTocOpen}>
             <SheetTrigger asChild>
@@ -383,7 +473,7 @@ function Reader() {
         ref={bodyRef}
         onMouseUp={handleSelection}
         onTouchEnd={handleSelection}
-        className="mx-auto px-5 pt-10 pb-28"
+        className="mx-auto px-5 pt-24 pb-32"
         style={{ maxWidth: prefs.width }}
       >
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{book.title}</p>

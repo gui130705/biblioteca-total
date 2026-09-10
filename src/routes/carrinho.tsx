@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Library, Trash2 } from "lucide-react";
+import { Library, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { ShelfRow } from "@/components/ShelfRow";
+import { NowReadingCard } from "@/components/NowReadingCard";
 import { Button } from "@/components/ui/button";
 import { useBooks } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
@@ -66,23 +67,8 @@ function Estante() {
         </p>
 
         {continueBook ? (
-          <div className="mt-8 rounded-xl border border-border bg-card p-6">
-            <p className="text-xs tracking-[0.2em] text-muted-foreground uppercase">
-              Continuar lendo
-            </p>
-            <h2 className="mt-2 font-display text-2xl font-bold">{continueBook.title}</h2>
-            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div className="h-full bg-primary" style={{ width: `${continuePercent}%` }} />
-            </div>
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="text-sm text-muted-foreground">{continuePercent}% lido</span>
-              <Button asChild>
-                <Link to="/ler/$slug" params={{ slug: continueBook.slug }}>
-                  <BookOpen className="size-4" />
-                  Retomar leitura
-                </Link>
-              </Button>
-            </div>
+          <div className="mt-8">
+            <NowReadingCard book={continueBook} percent={continuePercent} />
           </div>
         ) : null}
 

@@ -140,8 +140,9 @@
   }
 
   .reader-bar {
-    background: color-mix(in oklab, var(--background) 85%, transparent);
-    border-color: var(--border);
+    background: color-mix(in oklab, var(--background) 72%, transparent);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid color-mix(in oklab, var(--foreground) 8%, transparent);
   }
 
   .reader-text p {
