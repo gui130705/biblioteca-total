@@ -111,7 +111,7 @@ export function useReadingSessions() {
 
 async function pushSession(input: { bookId: string | null; minutes: number; pages: number; date?: string }) {
   const { error } = await supabase.rpc("log_reading_session", {
-    _book_id: input.bookId,
+    _book_id: input.bookId as unknown as string,
     _minutes: Number(input.minutes.toFixed(2)),
     _pages: Number(input.pages.toFixed(2)),
     _session_date: input.date ?? todayKey(),
