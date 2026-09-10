@@ -55,6 +55,7 @@ export function StatsPanel({ booksDone }: { booksDone: number }) {
   const { stats } = useReadingStats();
   const { goal, setGoal } = useDailyGoal();
   const percent = Math.min(100, Math.round((stats.todayMinutes / Math.max(goal, 1)) * 100));
+  const finished = Math.max(stats.booksFinished, booksDone);
 
   return (
     <section className="rounded-2xl border border-border/60 bg-card/40 p-5 sm:p-6">
