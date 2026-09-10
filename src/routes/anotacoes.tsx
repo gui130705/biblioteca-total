@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useBooks } from "@/lib/library";
 import { useAuth } from "@/hooks/useAuth";
-import { useDeleteHighlight, useHighlights, useUpdateHighlightNote } from "@/lib/reading";
+import { useDeleteHighlight, useHighlights, useUpdateHighlightNote ,
+  highlightKindLabel,
+} from "@/lib/reading";
 
 export const Route = createFileRoute("/anotacoes")({
   head: () => ({
@@ -92,6 +94,9 @@ function Anotacoes() {
                   <ul className="mt-4 space-y-4">
                     {items.map((h) => (
                       <li key={h.id} className="rounded-lg border border-border bg-card p-4">
+                        <span className="mb-2 inline-block rounded-full border border-primary/40 px-2.5 py-0.5 text-[10px] tracking-widest text-primary uppercase">
+                          {highlightKindLabel(h.kind)}
+                        </span>
                         <p className="border-l-2 border-primary pl-3 text-sm leading-relaxed italic">
                           “{h.text}”
                         </p>
