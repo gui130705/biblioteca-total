@@ -22,9 +22,24 @@ export type Highlight = {
   start_offset: number;
   end_offset: number;
   color: string;
+  kind: HighlightKind;
   note: string | null;
   created_at: string;
+  last_reviewed_at: string | null;
+  review_count: number;
 };
+
+export type HighlightKind = "insight" | "quote" | "question";
+
+export const HIGHLIGHT_KINDS: { value: HighlightKind; label: string }[] = [
+  { value: "insight", label: "Insight importante" },
+  { value: "quote", label: "Citação" },
+  { value: "question", label: "Dúvida" },
+];
+
+export function highlightKindLabel(kind: string) {
+  return HIGHLIGHT_KINDS.find((k) => k.value === kind)?.label ?? "Insight importante";
+}
 
 export function useReadingProgress() {
   const { user } = useAuth();
@@ -88,7 +103,7 @@ export function useHighlights(bookId?: string) {
       let query = supabase
         .from("highlights")
         .select(
-          "id, book_id, chapter_index, paragraph_index, text, start_offset, end_offset, color, note, created_at",
+          "id, book_id, chapter_index, paragraph_index, text, start_offset, end_offset, color, kind, note, created_at, last_reviewed_at, review_count",
         )
         .order("created_at", { ascending: false });
       if (bookId) query = query.eq("book_id", bookId);
@@ -110,6 +125,7 @@ export function useCreateHighlight() {
       text: string;
       startOffset: number;
       endOffset: number;
+      kind?: HighlightKind;
       note?: string | null;
     }) => {
       if (!user) throw new Error("Entre na sua conta para salvar marcações.");
@@ -121,6 +137,7 @@ export function useCreateHighlight() {
         text: input.text,
         start_offset: input.startOffset,
         end_offset: input.endOffset,
+        kind: input.kind ?? "insight",
         note: input.note ?? null,
       });
       if (error) throw error;
@@ -149,6 +166,22 @@ export function useDeleteHighlight() {
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("highlights").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: ["highlights"] });
+    },
+  });
+}
+
+export function useMarkReviewed() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, count }: { id: string; count: number }) => {
+      const { error } = await supabase
+        .from("highlights")
+        .update({ last_reviewed_at: new Date().toISOString(), review_count: count + 1 })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
