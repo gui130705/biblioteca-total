@@ -278,20 +278,71 @@ function Reader() {
         <div className="h-full bg-primary transition-[width]" style={{ width: `${percent}%` }} />
       </div>
 
-      <header className="reader-bar sticky top-0 z-30 border-b backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center gap-2 px-3 py-2 sm:px-6">
+      <header
+        className={cn(
+          "reader-bar fixed inset-x-0 top-0 z-30 transition-all duration-300",
+          barHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100",
+        )}
+        onMouseEnter={() => setBarHidden(false)}
+      >
+        <div className="mx-auto flex max-w-5xl items-center gap-1 px-3 py-2 sm:px-6">
           <Button variant="ghost" size="icon" asChild aria-label="Voltar">
             <Link to="/livro/$slug" params={{ slug: book.slug }}>
               <ArrowLeft className="size-4" />
             </Link>
           </Button>
 
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{book.title}</p>
-            <p className="truncate text-xs opacity-70">
-              {chapter.title} · {percent}% lido · {formatMinutes(remaining)} restantes
+          <div className="min-w-0 flex-1 text-center sm:text-left">
+            <p className="truncate text-[13px] font-medium">{book.title}</p>
+            <p className="truncate text-[11px] opacity-55">
+              {chapter.title} · {percent}% · {formatMinutes(remaining)} restantes
             </p>
           </div>
+
+          <div className="mr-1 hidden items-center gap-0.5 rounded-full border border-current/15 px-1 py-0.5 sm:flex">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label="Diminuir texto"
+              onClick={() => update({ fontSize: Math.max(15, prefs.fontSize - 1) })}
+            >
+              <Minus className="size-3.5" />
+            </Button>
+            <span className="text-[11px] opacity-60">A</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label="Aumentar texto"
+              onClick={() => update({ fontSize: Math.min(28, prefs.fontSize + 1) })}
+            >
+              <Plus className="size-3.5" />
+            </Button>
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Alternar tema de leitura"
+            onClick={() => {
+              const order: ReaderTheme[] = ["escuro", "sepia", "papel"];
+              const next = order[(order.indexOf(prefs.theme) + 1) % order.length]!;
+              update({ theme: next });
+            }}
+          >
+            {prefs.theme === "escuro" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Modo foco em tela cheia"
+            onClick={toggleFocus}
+          >
+            {focusMode ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+          </Button>
+
 
           <Sheet open={tocOpen} onOpenChange={setTocOpen}>
             <SheetTrigger asChild>
