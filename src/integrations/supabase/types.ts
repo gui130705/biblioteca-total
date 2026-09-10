@@ -364,6 +364,42 @@ export type Database = {
           },
         ]
       }
+      reading_stats: {
+        Row: {
+          books_finished: number
+          created_at: string
+          current_streak: number
+          last_read_date: string | null
+          longest_streak: number
+          total_minutes: number
+          total_pages: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          books_finished?: number
+          created_at?: string
+          current_streak?: number
+          last_read_date?: string | null
+          longest_streak?: number
+          total_minutes?: number
+          total_pages?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          books_finished?: number
+          created_at?: string
+          current_streak?: number
+          last_read_date?: string | null
+          longest_streak?: number
+          total_minutes?: number
+          total_pages?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -393,6 +429,31 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_reading_session: {
+        Args: {
+          _book_id: string
+          _minutes: number
+          _pages: number
+          _session_date?: string
+        }
+        Returns: {
+          books_finished: number
+          created_at: string
+          current_streak: number
+          last_read_date: string | null
+          longest_streak: number
+          total_minutes: number
+          total_pages: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reading_stats"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
