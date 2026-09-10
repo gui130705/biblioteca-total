@@ -184,3 +184,15 @@
     --border: oklch(0.88 0.004 90);
   }
 }
+
+@layer base {
+  .cover-3d {
+    transform: rotateY(-10deg) rotateX(3deg);
+    transform-style: preserve-3d;
+    transition: transform 500ms ease;
+  }
+
+  .cover-3d:hover {
+    transform: rotateY(-4deg) rotateX(1deg) translateY(-4px);
+  }
+}
