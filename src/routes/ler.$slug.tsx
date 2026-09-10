@@ -18,6 +18,7 @@ import {
   Settings2,
   StickyNote,
   Sun,
+  Timer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ import {
 } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useBook } from "@/lib/library";
+import { useLogSession } from "@/lib/stats";
 import { useAuth } from "@/hooks/useAuth";
 import { useReaderPrefs, type ReaderFont, type ReaderTheme } from "@/hooks/useReaderPrefs";
 import {
@@ -41,6 +43,8 @@ import {
   useBookContent,
 } from "@/lib/book-content";
 import {
+  HIGHLIGHT_KINDS,
+  type HighlightKind,
   useBookProgress,
   useCreateHighlight,
   useHighlights,
@@ -90,6 +94,7 @@ function Reader() {
   const progress = useBookProgress(book?.id);
   const saveProgress = useSaveProgress();
   const createHighlight = useCreateHighlight();
+  const logSession = useLogSession();
   const { data: highlights = [] } = useHighlights(book?.id);
 
   const [chapterIndex, setChapterIndex] = useState(0);
@@ -103,10 +108,14 @@ function Reader() {
     end: number;
   } | null>(null);
   const [note, setNote] = useState("");
+  const [kind, setKind] = useState<HighlightKind>("insight");
+  const [sessionSeconds, setSessionSeconds] = useState(0);
   const [barHidden, setBarHidden] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const lastScroll = useRef(0);
+  const startPercent = useRef<number | null>(null);
+  const sessionRef = useRef({ seconds: 0, percent: 0, bookId: "", pages: 0 });
 
   const chapter = content?.chapters[chapterIndex];
 
@@ -149,6 +158,7 @@ function Reader() {
     if (!document.fullscreenElement) {
       void el.requestFullscreen?.().catch(() => {});
       setFocusMode(true);
+      setBarHidden(true);
     } else {
       void document.exitFullscreen?.().catch(() => {});
       setFocusMode(false);
@@ -161,6 +171,14 @@ function Reader() {
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
 
+  // Cronômetro da sessão de leitura (pausa quando a aba fica oculta).
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      if (document.visibilityState === "visible") setSessionSeconds((s) => s + 1);
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
   const percent = useMemo(
     () => (content ? computePercent(content, chapterIndex, ratio) : 0),
     [content, chapterIndex, ratio],
@@ -171,6 +189,31 @@ function Reader() {
     const left = content.words * (1 - percent / 100);
     return readingMinutes(left);
   }, [content, percent]);
+
+  useEffect(() => {
+    if (!book) return;
+    if (startPercent.current === null && percent > 0) startPercent.current = percent;
+    sessionRef.current = {
+      seconds: sessionSeconds,
+      percent,
+      bookId: book.id,
+      pages: book.pages ?? 120,
+    };
+  }, [book, percent, sessionSeconds]);
+
+  useEffect(() => {
+    return () => {
+      const { seconds, percent: end, bookId, pages } = sessionRef.current;
+      if (!bookId || seconds < 30) return;
+      const delta = Math.max(0, end - (startPercent.current ?? end));
+      logSession.mutate({
+        bookId,
+        minutes: seconds / 60,
+        pages: (delta / 100) * pages,
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Salva progresso periodicamente.
   const save = useCallback(
@@ -304,6 +347,15 @@ function Reader() {
               {chapter.title} · {percent}% · {formatMinutes(remaining)} restantes
             </p>
           </div>
+
+          <span
+            className="mr-1 hidden items-center gap-1.5 rounded-full border border-current/15 px-2.5 py-1 text-[11px] opacity-70 sm:inline-flex"
+            title="Tempo desta sessão"
+          >
+            <Timer className="size-3" />
+            {String(Math.floor(sessionSeconds / 60)).padStart(2, "0")}:
+            {String(sessionSeconds % 60).padStart(2, "0")}
+          </span>
 
           <div className="mr-1 hidden items-center gap-0.5 rounded-full border border-current/15 px-1 py-0.5 sm:flex">
             <Button
@@ -541,6 +593,19 @@ function Reader() {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 p-4 backdrop-blur">
           <div className="mx-auto max-w-3xl space-y-3">
             <p className="line-clamp-2 text-sm text-muted-foreground italic">“{selection.text}”</p>
+            <div className="flex flex-wrap gap-1.5">
+              {HIGHLIGHT_KINDS.map((k) => (
+                <Button
+                  key={k.value}
+                  size="sm"
+                  variant={kind === k.value ? "default" : "outline"}
+                  className="h-7 px-3 text-xs"
+                  onClick={() => setKind(k.value)}
+                >
+                  {k.label}
+                </Button>
+              ))}
+            </div>
             <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -577,6 +642,7 @@ function Reader() {
                       text: selection.text,
                       startOffset: selection.start,
                       endOffset: selection.end,
+                      kind,
                       note: note.trim() || null,
                     },
                     {
@@ -596,7 +662,7 @@ function Reader() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : focusMode ? null : (
         <div className="fixed right-4 bottom-4 z-30 flex gap-2">
           <Button variant="secondary" size="sm" asChild>
             <Link to="/anotacoes">
