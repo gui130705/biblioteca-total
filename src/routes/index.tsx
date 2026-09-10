@@ -3,8 +3,10 @@ import { BookOpen, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { BookCard } from "@/components/BookCard";
+import { ShelfRow } from "@/components/ShelfRow";
 import { Button } from "@/components/ui/button";
 import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
+import { useReadingProgress } from "@/lib/reading";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -36,8 +38,14 @@ function Index() {
   const cart = useCart();
   const { user } = useAuth();
 
+  const { data: progress = [] } = useReadingProgress();
+
   const featured = books.filter((b) => b.is_featured).slice(0, 4);
   const showcase = featured.length > 0 ? featured : books.slice(0, 4);
+  const reading = books.filter((b) => {
+    const p = progress.find((item) => item.book_id === b.id);
+    return p?.status === "reading" && p.percent < 98;
+  });
 
   return (
     <PageShell>
@@ -69,6 +77,25 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {reading.length > 0 ? (
+        <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6">
+          <div className="flex items-end justify-between">
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">Continuar lendo</h2>
+            <Button variant="ghost" asChild>
+              <Link to="/carrinho">Minha estante</Link>
+            </Button>
+          </div>
+          <ShelfRow
+            title="Em andamento"
+            books={reading}
+            progressFor={(id) => progress.find((p) => p.book_id === id) ?? null}
+            empty=""
+          />
+        </section>
+      ) : null}
+
+
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-3">
         {[

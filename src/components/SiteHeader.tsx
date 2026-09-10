@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 const links = [
   { to: "/", label: "Início" },
   { to: "/catalogo", label: "Catálogo" },
+  { to: "/carrinho", label: "Estante" },
+  { to: "/anotacoes", label: "Anotações" },
   { to: "/favoritos", label: "Favoritos" },
 ] as const;
 

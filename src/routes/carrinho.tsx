@@ -1,92 +1,152 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, Library, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
-import { BookCover } from "@/components/BookCover";
+import { ShelfRow } from "@/components/ShelfRow";
 import { Button } from "@/components/ui/button";
 import { useBooks } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
+import { useReadingProgress, useSaveProgress } from "@/lib/reading";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
     meta: [
-      { title: "Minha Biblioteca — Biblioteca Proibida" },
+      { title: "Minha estante — Biblioteca Proibida" },
       {
         name: "description",
-        content: "Acesse e organize os títulos gratuitos adicionados à sua biblioteca digital.",
+        content:
+          "Sua estante pessoal com leituras em andamento, títulos concluídos e a lista Quero ler.",
       },
-      { property: "og:title", content: "Minha Biblioteca — Biblioteca Proibida" },
-      { property: "og:description", content: "Seus livros digitais gratuitos reunidos em um só lugar." },
+      { property: "og:title", content: "Minha estante — Biblioteca Proibida" },
+      {
+        property: "og:description",
+        content: "Continue de onde parou e acompanhe seu progresso de leitura.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Carrinho,
+  component: Estante,
 });
 
-function Carrinho() {
+function Estante() {
   const cart = useCart();
+  const { user } = useAuth();
   const { data: books = [] } = useBooks();
-  const items = books.filter((b) => cart.items.includes(b.id));
+  const { data: progress = [] } = useReadingProgress();
+  const saveProgress = useSaveProgress();
+
+  const progressFor = (bookId: string) => progress.find((p) => p.book_id === bookId) ?? null;
+  const saved = books.filter((b) => cart.items.includes(b.id));
+
+  const reading = books.filter((b) => {
+    const p = progressFor(b.id);
+    return p?.status === "reading" && p.percent < 98;
+  });
+  const done = books.filter((b) => progressFor(b.id)?.status === "done");
+  const want = books.filter((b) => {
+    const p = progressFor(b.id);
+    const isSaved = cart.items.includes(b.id) || p?.status === "want";
+    return isSaved && p?.status !== "reading" && p?.status !== "done";
+  });
+
+  const continueBook = reading[0];
+  const continuePercent = continueBook ? (progressFor(continueBook.id)?.percent ?? 0) : 0;
 
   return (
     <PageShell>
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
         <div className="flex items-center gap-3">
           <Library className="size-7 text-primary" />
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Minha biblioteca</h1>
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">Minha estante</h1>
         </div>
-        <p className="mt-2 text-muted-foreground">Seus títulos gratuitos, prontos para leitura.</p>
+        <p className="mt-2 text-muted-foreground">
+          Seus livros gratuitos, organizados pelo seu ritmo de leitura.
+        </p>
 
-        {items.length === 0 ? (
+        {continueBook ? (
+          <div className="mt-8 rounded-xl border border-border bg-card p-6">
+            <p className="text-xs tracking-[0.2em] text-muted-foreground uppercase">
+              Continuar lendo
+            </p>
+            <h2 className="mt-2 font-display text-2xl font-bold">{continueBook.title}</h2>
+            <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div className="h-full bg-primary" style={{ width: `${continuePercent}%` }} />
+            </div>
+            <div className="mt-3 flex items-center justify-between gap-3">
+              <span className="text-sm text-muted-foreground">{continuePercent}% lido</span>
+              <Button asChild>
+                <Link to="/ler/$slug" params={{ slug: continueBook.slug }}>
+                  <BookOpen className="size-4" />
+                  Retomar leitura
+                </Link>
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        {!user ? (
+          <div className="mt-8 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            Entre na sua conta para salvar progresso, marcações e anotações em todos os aparelhos.{" "}
+            <Link to="/auth" className="text-primary underline-offset-4 hover:underline">
+              Entrar
+            </Link>
+          </div>
+        ) : null}
+
+        <ShelfRow
+          title="Em andamento"
+          books={reading}
+          progressFor={progressFor}
+          empty="Nenhuma leitura em andamento."
+        />
+        <ShelfRow
+          title="Quero ler"
+          books={want}
+          progressFor={progressFor}
+          empty="Adicione títulos à sua estante pelo catálogo."
+          action={(book) => (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Remover ${book.title}`}
+              onClick={() => {
+                cart.remove(book.id);
+                toast.success("Removido da estante.");
+              }}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          )}
+        />
+        <ShelfRow
+          title="Concluídos"
+          books={done}
+          progressFor={progressFor}
+          empty="Você ainda não concluiu nenhum livro."
+          action={(book) => (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                saveProgress.mutate({ bookId: book.id, status: "reading" });
+                toast.success("Movido para Em andamento.");
+              }}
+            >
+              Reabrir
+            </Button>
+          )}
+        />
+
+        {saved.length === 0 && reading.length === 0 && done.length === 0 ? (
           <div className="mt-10 rounded-xl border border-dashed border-border p-12 text-center">
-            <p className="text-muted-foreground">Sua biblioteca ainda está vazia.</p>
+            <p className="text-muted-foreground">Sua estante ainda está vazia.</p>
             <Button className="mt-4" asChild>
               <Link to="/catalogo">Explorar catálogo</Link>
             </Button>
           </div>
-        ) : (
-          <div className="mt-8">
-            <ul className="space-y-4">
-              {items.map((book) => (
-                <li
-                  key={book.id}
-                   className="grid grid-cols-[72px_minmax(0,1fr)_auto] items-center gap-4 rounded-lg border border-border bg-card p-3 sm:grid-cols-[88px_minmax(0,1fr)_auto_auto] sm:p-4"
-                >
-                  <BookCover
-                    title={book.title.replace(/^Livro d[eoa] /i, "")}
-                    theme={book.cover_theme}
-                     className="h-28 w-full shrink-0 sm:h-32"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      to="/livro/$slug"
-                      params={{ slug: book.slug }}
-                      className="font-medium hover:text-primary"
-                    >
-                      {book.title}
-                    </Link>
-                    <p className="truncate text-sm text-muted-foreground">{book.category}</p>
-                  </div>
-                   <span className="hidden font-semibold text-gold sm:block">Grátis</span>
-                   <Button size="sm" asChild className="hidden sm:inline-flex">
-                     <Link to="/ler/$slug" params={{ slug: book.slug }}>
-                       <BookOpen className="size-4" />
-                       Ler agora
-                     </Link>
-                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Remover ${book.title}`}
-                    onClick={() => cart.remove(book.id)}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        ) : null}
       </div>
     </PageShell>
   );

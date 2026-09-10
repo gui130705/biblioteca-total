@@ -129,3 +129,57 @@
   background-clip: text;
   color: transparent;
 }
+
+/* ---------- Leitor imersivo ---------- */
+
+@layer base {
+  .reader-surface {
+    background: var(--background);
+    background-image: none;
+    color: var(--foreground);
+  }
+
+  .reader-bar {
+    background: color-mix(in oklab, var(--background) 85%, transparent);
+    border-color: var(--border);
+  }
+
+  .reader-text p {
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  .reader-marked {
+    border-left: 2px solid var(--primary);
+    padding-left: 0.75rem;
+    background: color-mix(in oklab, var(--primary) 8%, transparent);
+    border-radius: 0.25rem;
+  }
+
+  .reader-escuro {
+    --background: oklch(0.14 0.008 20);
+    --foreground: oklch(0.92 0.005 60);
+    --card: oklch(0.18 0.012 20);
+    --muted: oklch(0.24 0.012 25);
+    --muted-foreground: oklch(0.68 0.015 45);
+    --border: oklch(0.28 0.02 25);
+  }
+
+  .reader-sepia {
+    --background: oklch(0.93 0.03 80);
+    --foreground: oklch(0.28 0.03 50);
+    --card: oklch(0.96 0.025 80);
+    --muted: oklch(0.88 0.03 80);
+    --muted-foreground: oklch(0.45 0.03 55);
+    --border: oklch(0.8 0.04 75);
+  }
+
+  .reader-papel {
+    --background: oklch(0.985 0.002 90);
+    --foreground: oklch(0.24 0.005 60);
+    --card: oklch(1 0 0);
+    --muted: oklch(0.94 0.003 90);
+    --muted-foreground: oklch(0.5 0.005 60);
+    --border: oklch(0.88 0.004 90);
+  }
+}
