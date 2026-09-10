@@ -97,7 +97,10 @@ function Reader() {
     end: number;
   } | null>(null);
   const [note, setNote] = useState("");
+  const [barHidden, setBarHidden] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const lastScroll = useRef(0);
 
   const chapter = content?.chapters[chapterIndex];
 
