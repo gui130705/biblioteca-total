@@ -123,8 +123,11 @@ export type Database = {
           created_at: string
           end_offset: number
           id: string
+          kind: string
+          last_reviewed_at: string | null
           note: string | null
           paragraph_index: number
+          review_count: number
           start_offset: number
           text: string
           updated_at: string
@@ -137,8 +140,11 @@ export type Database = {
           created_at?: string
           end_offset?: number
           id?: string
+          kind?: string
+          last_reviewed_at?: string | null
           note?: string | null
           paragraph_index?: number
+          review_count?: number
           start_offset?: number
           text: string
           updated_at?: string
@@ -151,8 +157,11 @@ export type Database = {
           created_at?: string
           end_offset?: number
           id?: string
+          kind?: string
+          last_reviewed_at?: string | null
           note?: string | null
           paragraph_index?: number
+          review_count?: number
           start_offset?: number
           text?: string
           updated_at?: string
@@ -249,16 +258,19 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          daily_goal_minutes: number
           display_name: string | null
           id: string
         }
         Insert: {
           created_at?: string
+          daily_goal_minutes?: number
           display_name?: string | null
           id: string
         }
         Update: {
           created_at?: string
+          daily_goal_minutes?: number
           display_name?: string | null
           id?: string
         }
@@ -304,6 +316,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "reading_progress_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reading_sessions: {
+        Row: {
+          book_id: string | null
+          created_at: string
+          id: string
+          minutes: number
+          pages: number
+          session_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id?: string | null
+          created_at?: string
+          id?: string
+          minutes?: number
+          pages?: number
+          session_date?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string | null
+          created_at?: string
+          id?: string
+          minutes?: number
+          pages?: number
+          session_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_sessions_book_id_fkey"
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
