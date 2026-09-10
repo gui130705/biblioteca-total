@@ -201,18 +201,37 @@ function Reader() {
     };
   }, [book, percent, sessionSeconds]);
 
+  // Envia ao banco o que foi lido desde o último envio (periodicamente, ao pausar e ao sair).
+  const flushSession = useRef<(min?: number) => void>(() => {});
+  flushSession.current = (minSeconds = 30) => {
+    const { seconds, percent: end, bookId, pages } = sessionRef.current;
+    const seconds0 = flushedRef.current.seconds;
+    const elapsed = seconds - seconds0;
+    if (!bookId || elapsed < minSeconds) return;
+    const from = flushedRef.current.percent ?? startPercent.current ?? end;
+    const delta = Math.max(0, end - from);
+    flushedRef.current = { seconds, percent: end };
+    logSession.mutate({
+      bookId,
+      minutes: elapsed / 60,
+      pages: (delta / 100) * pages,
+    });
+  };
+
   useEffect(() => {
-    return () => {
-      const { seconds, percent: end, bookId, pages } = sessionRef.current;
-      if (!bookId || seconds < 30) return;
-      const delta = Math.max(0, end - (startPercent.current ?? end));
-      logSession.mutate({
-        bookId,
-        minutes: seconds / 60,
-        pages: (delta / 100) * pages,
-      });
+    const id = window.setInterval(() => flushSession.current(60), 60000);
+    const onHidden = () => {
+      if (document.visibilityState === "hidden") flushSession.current(20);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const onLeave = () => flushSession.current(20);
+    document.addEventListener("visibilitychange", onHidden);
+    window.addEventListener("pagehide", onLeave);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onHidden);
+      window.removeEventListener("pagehide", onLeave);
+      flushSession.current(20);
+    };
   }, []);
 
   // Salva progresso periodicamente.
