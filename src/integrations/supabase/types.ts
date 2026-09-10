@@ -115,6 +115,59 @@ export type Database = {
           },
         ]
       }
+      highlights: {
+        Row: {
+          book_id: string
+          chapter_index: number
+          color: string
+          created_at: string
+          end_offset: number
+          id: string
+          note: string | null
+          paragraph_index: number
+          start_offset: number
+          text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          chapter_index?: number
+          color?: string
+          created_at?: string
+          end_offset?: number
+          id?: string
+          note?: string | null
+          paragraph_index?: number
+          start_offset?: number
+          text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          chapter_index?: number
+          color?: string
+          created_at?: string
+          end_offset?: number
+          id?: string
+          note?: string | null
+          paragraph_index?: number
+          start_offset?: number
+          text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "highlights_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           book_id: string
@@ -210,6 +263,53 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      reading_progress: {
+        Row: {
+          book_id: string
+          chapter_index: number
+          created_at: string
+          id: string
+          last_read_at: string
+          percent: number
+          scroll_ratio: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          chapter_index?: number
+          created_at?: string
+          id?: string
+          last_read_at?: string
+          percent?: number
+          scroll_ratio?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          chapter_index?: number
+          created_at?: string
+          id?: string
+          last_read_at?: string
+          percent?: number
+          scroll_ratio?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_progress_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
