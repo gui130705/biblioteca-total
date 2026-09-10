@@ -3,8 +3,10 @@ import { BookOpen, Search, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { BookCard } from "@/components/BookCard";
+import { ShelfRow } from "@/components/ShelfRow";
 import { Button } from "@/components/ui/button";
 import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
+import { useReadingProgress } from "@/lib/reading";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 
