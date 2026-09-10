@@ -10,8 +10,14 @@ import {
   Download,
   Highlighter,
   List,
+  Maximize2,
+  Minimize2,
+  Minus,
+  Moon,
+  Plus,
   Settings2,
   StickyNote,
+  Sun,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
