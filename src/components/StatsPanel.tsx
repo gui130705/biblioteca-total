@@ -84,10 +84,14 @@ export function StatsPanel({ booksDone }: { booksDone: number }) {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat icon={Flame} value={`${stats.streak}`} label="Dias seguidos" />
+          <Stat
+            icon={Flame}
+            value={`${stats.streak}`}
+            label={`Dias seguidos · recorde ${stats.longestStreak}`}
+          />
           <Stat icon={Clock} value={`${stats.totalMinutes}`} label="Minutos lidos" />
           <Stat icon={ScrollText} value={`${stats.totalPages}`} label="Páginas lidas" />
-          <Stat icon={BookCheck} value={`${booksDone}`} label="Livros concluídos" />
+          <Stat icon={BookCheck} value={`${finished}`} label="Livros concluídos" />
         </div>
       </div>
     </section>
