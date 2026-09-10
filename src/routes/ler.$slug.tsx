@@ -116,6 +116,7 @@ function Reader() {
   const lastScroll = useRef(0);
   const startPercent = useRef<number | null>(null);
   const sessionRef = useRef({ seconds: 0, percent: 0, bookId: "", pages: 0 });
+  const flushedRef = useRef<{ seconds: number; percent: number | null }>({ seconds: 0, percent: null });
 
   const chapter = content?.chapters[chapterIndex];
 
