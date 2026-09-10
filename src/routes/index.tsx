@@ -70,6 +70,25 @@ function Index() {
         </div>
       </section>
 
+      {reading.length > 0 ? (
+        <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6">
+          <div className="flex items-end justify-between">
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">Continuar lendo</h2>
+            <Button variant="ghost" asChild>
+              <Link to="/carrinho">Minha estante</Link>
+            </Button>
+          </div>
+          <ShelfRow
+            title="Em andamento"
+            books={reading}
+            progressFor={(id) => progress.find((p) => p.book_id === id) ?? null}
+            empty=""
+          />
+        </section>
+      ) : null}
+
+
+
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 md:grid-cols-3">
         {[
           { icon: BookOpen, title: "Leitura organizada", text: "Categorias, busca e detalhes completos de cada obra." },
