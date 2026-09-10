@@ -38,8 +38,14 @@ function Index() {
   const cart = useCart();
   const { user } = useAuth();
 
+  const { data: progress = [] } = useReadingProgress();
+
   const featured = books.filter((b) => b.is_featured).slice(0, 4);
   const showcase = featured.length > 0 ? featured : books.slice(0, 4);
+  const reading = books.filter((b) => {
+    const p = progress.find((item) => item.book_id === b.id);
+    return p?.status === "reading" && p.percent < 98;
+  });
 
   return (
     <PageShell>
