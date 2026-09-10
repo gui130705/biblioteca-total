@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,8 +11,85 @@ export type ReadingSession = {
   session_date: string;
 };
 
+export type ReadingStatsRow = {
+  current_streak: number;
+  longest_streak: number;
+  last_read_date: string | null;
+  total_minutes: number;
+  total_pages: number;
+  books_finished: number;
+};
+
+export type ReadingStats = {
+  streak: number;
+  longestStreak: number;
+  totalMinutes: number;
+  totalPages: number;
+  todayMinutes: number;
+  booksFinished: number;
+};
+
+const LOCAL_KEY = "bp:reading-sessions";
+const LOCAL_GOAL_KEY = "bp:daily-goal";
+
+type LocalSession = { bookId: string | null; minutes: number; pages: number; date: string };
+
 function todayKey(d = new Date()) {
   return d.toISOString().slice(0, 10);
+}
+
+function readLocal(): LocalSession[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(LOCAL_KEY);
+    return raw ? (JSON.parse(raw) as LocalSession[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLocal(list: LocalSession[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LOCAL_KEY, JSON.stringify(list.slice(-500)));
+  } catch {
+    /* armazenamento indisponível */
+  }
+}
+
+export function readLocalGoal() {
+  if (typeof window === "undefined") return 30;
+  const raw = window.localStorage.getItem(LOCAL_GOAL_KEY);
+  const n = raw ? Number(raw) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : 30;
+}
+
+function localStats(): ReadingStats {
+  const sessions = readLocal();
+  const byDay = new Map<string, number>();
+  let totalMinutes = 0;
+  let totalPages = 0;
+  for (const s of sessions) {
+    totalMinutes += Number(s.minutes) || 0;
+    totalPages += Number(s.pages) || 0;
+    byDay.set(s.date, (byDay.get(s.date) ?? 0) + (Number(s.minutes) || 0));
+  }
+  let streak = 0;
+  const cursor = new Date();
+  if (!byDay.has(todayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+  for (;;) {
+    if (!byDay.has(todayKey(cursor))) break;
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return {
+    streak,
+    longestStreak: streak,
+    totalMinutes: Math.round(totalMinutes),
+    totalPages: Math.round(totalPages),
+    todayMinutes: Math.round(byDay.get(todayKey()) ?? 0),
+    booksFinished: 0,
+  };
 }
 
 export function useReadingSessions() {
@@ -31,25 +109,70 @@ export function useReadingSessions() {
   });
 }
 
+async function pushSession(input: { bookId: string | null; minutes: number; pages: number; date?: string }) {
+  const { error } = await supabase.rpc("log_reading_session", {
+    _book_id: input.bookId,
+    _minutes: Number(input.minutes.toFixed(2)),
+    _pages: Number(input.pages.toFixed(2)),
+    _session_date: input.date ?? todayKey(),
+  });
+  if (error) throw error;
+}
+
 export function useLogSession() {
   const client = useQueryClient();
   const { user } = useAuth();
   return useMutation({
     mutationFn: async (input: { bookId: string; minutes: number; pages: number }) => {
-      if (!user || input.minutes <= 0) return;
-      const { error } = await supabase.from("reading_sessions").insert({
-        user_id: user.id,
-        book_id: input.bookId,
-        minutes: Number(input.minutes.toFixed(2)),
-        pages: Number(input.pages.toFixed(2)),
-        session_date: todayKey(),
-      });
-      if (error) throw error;
+      if (input.minutes <= 0 && input.pages <= 0) return;
+      if (!user) {
+        writeLocal([
+          ...readLocal(),
+          {
+            bookId: input.bookId,
+            minutes: Number(input.minutes.toFixed(2)),
+            pages: Number(input.pages.toFixed(2)),
+            date: todayKey(),
+          },
+        ]);
+        return;
+      }
+      await pushSession({ bookId: input.bookId, minutes: input.minutes, pages: input.pages });
     },
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ["reading-sessions"] });
+      void client.invalidateQueries({ queryKey: ["reading-stats"] });
     },
   });
+}
+
+/** Envia ao banco as sessões guardadas no aparelho enquanto a pessoa estava deslogada. */
+export function useSyncLocalSessions() {
+  const { user } = useAuth();
+  const client = useQueryClient();
+
+  useEffect(() => {
+    if (!user) return;
+    const pending = readLocal();
+    if (pending.length === 0) return;
+    let active = true;
+    void (async () => {
+      try {
+        for (const s of pending) {
+          await pushSession({ bookId: s.bookId, minutes: s.minutes, pages: s.pages, date: s.date });
+        }
+        writeLocal([]);
+        if (!active) return;
+        void client.invalidateQueries({ queryKey: ["reading-stats"] });
+        void client.invalidateQueries({ queryKey: ["reading-sessions"] });
+      } catch {
+        /* tenta novamente na próxima sessão */
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [user, client]);
 }
 
 export function useDailyGoal() {
@@ -72,6 +195,7 @@ export function useDailyGoal() {
 
   const setGoal = useMutation({
     mutationFn: async (minutes: number) => {
+      if (typeof window !== "undefined") window.localStorage.setItem(LOCAL_GOAL_KEY, String(minutes));
       if (!user) return;
       const { error } = await supabase
         .from("profiles")
@@ -84,46 +208,58 @@ export function useDailyGoal() {
     },
   });
 
-  return { goal: query.data ?? 30, setGoal };
-}
-
-export type ReadingStats = {
-  streak: number;
-  totalMinutes: number;
-  totalPages: number;
-  todayMinutes: number;
-};
-
-export function computeStats(sessions: ReadingSession[]): ReadingStats {
-  const byDay = new Map<string, number>();
-  let totalMinutes = 0;
-  let totalPages = 0;
-
-  for (const s of sessions) {
-    totalMinutes += Number(s.minutes) || 0;
-    totalPages += Number(s.pages) || 0;
-    byDay.set(s.session_date, (byDay.get(s.session_date) ?? 0) + (Number(s.minutes) || 0));
-  }
-
-  let streak = 0;
-  const cursor = new Date();
-  // A ofensiva continua válida se a pessoa ainda não leu hoje, mas leu ontem.
-  if (!byDay.has(todayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
-  for (;;) {
-    if (!byDay.has(todayKey(cursor))) break;
-    streak += 1;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  return {
-    streak,
-    totalMinutes: Math.round(totalMinutes),
-    totalPages: Math.round(totalPages),
-    todayMinutes: Math.round(byDay.get(todayKey()) ?? 0),
-  };
+  return { goal: user ? (query.data ?? 30) : readLocalGoal(), setGoal };
 }
 
 export function useReadingStats() {
-  const { data: sessions = [], isLoading } = useReadingSessions();
-  return { stats: computeStats(sessions), isLoading };
+  const { user } = useAuth();
+  useSyncLocalSessions();
+
+  const query = useQuery({
+    queryKey: ["reading-stats", user?.id],
+    enabled: Boolean(user),
+    queryFn: async (): Promise<ReadingStats> => {
+      const [{ data: row, error }, { data: sessions, error: sessionsError }] = await Promise.all([
+        supabase
+          .from("reading_stats")
+          .select("current_streak, longest_streak, last_read_date, total_minutes, total_pages, books_finished")
+          .eq("user_id", user!.id)
+          .maybeSingle(),
+        supabase.from("reading_sessions").select("minutes").eq("session_date", todayKey()),
+      ]);
+      if (error) throw error;
+      if (sessionsError) throw sessionsError;
+
+      const todayMinutes = (sessions ?? []).reduce((sum, s) => sum + (Number(s.minutes) || 0), 0);
+      const stats = (row ?? null) as ReadingStatsRow | null;
+      const stale = stats?.last_read_date
+        ? (Date.now() - new Date(`${stats.last_read_date}T00:00:00Z`).getTime()) / 86400000 > 1.5
+        : true;
+
+      return {
+        streak: stale ? 0 : (stats?.current_streak ?? 0),
+        longestStreak: stats?.longest_streak ?? 0,
+        totalMinutes: Math.round(Number(stats?.total_minutes ?? 0)),
+        totalPages: Math.round(Number(stats?.total_pages ?? 0)),
+        todayMinutes: Math.round(todayMinutes),
+        booksFinished: stats?.books_finished ?? 0,
+      };
+    },
+  });
+
+  const fallback = user ? null : localStats();
+
+  return {
+    stats:
+      fallback ??
+      query.data ?? {
+        streak: 0,
+        longestStreak: 0,
+        totalMinutes: 0,
+        totalPages: 0,
+        todayMinutes: 0,
+        booksFinished: 0,
+      },
+    isLoading: user ? query.isLoading : false,
+  };
 }
