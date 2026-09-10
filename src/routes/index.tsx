@@ -5,6 +5,7 @@ import { PageShell } from "@/components/PageShell";
 import { BookCard } from "@/components/BookCard";
 import { ShelfRow } from "@/components/ShelfRow";
 import { NowReadingCard } from "@/components/NowReadingCard";
+import { StatsPanel } from "@/components/StatsPanel";
 import { Button } from "@/components/ui/button";
 import { useBooks, useFavorites, useToggleFavorite } from "@/lib/library";
 import { useReadingProgress } from "@/lib/reading";
@@ -79,8 +80,14 @@ function Index() {
         </div>
       </section>
 
+      {user ? (
+        <section className="mx-auto max-w-6xl px-4 pt-12 sm:px-6">
+          <StatsPanel booksDone={progress.filter((p) => p.status === "done").length} />
+        </section>
+      ) : null}
+
       {reading.length > 0 && reading[0] ? (
-        <section className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
+        <section className="mx-auto max-w-6xl px-4 pt-12 sm:px-6">
           <div className="mb-4 flex items-end justify-between">
             <h2 className="font-display text-2xl font-bold sm:text-3xl">Continuar lendo</h2>
             <Button variant="ghost" asChild>
