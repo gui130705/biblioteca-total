@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
 import { BookCover } from "@/components/BookCover";
 import { Button } from "@/components/ui/button";
 import type { Book } from "@/lib/books";
@@ -7,10 +7,12 @@ import type { Book } from "@/lib/books";
 export function NowReadingCard({
   book,
   percent,
+  remainingMinutes,
   label = "Lendo agora",
 }: {
   book: Book;
   percent: number;
+  remainingMinutes?: number;
   label?: string;
 }) {
   return (
@@ -23,15 +25,19 @@ export function NowReadingCard({
         }}
         aria-hidden
       />
-      <div className="relative grid gap-6 p-5 sm:grid-cols-[150px_minmax(0,1fr)] sm:p-8">
-        <Link to="/livro/$slug" params={{ slug: book.slug }} className="block">
-          <BookCover
-            title={book.title.replace(/^Livro d[eoa] /i, "")}
-            subtitle={book.subtitle}
-            theme={book.cover_theme}
-            className="h-56 w-full shadow-2xl sm:h-64"
-          />
-        </Link>
+      <div className="relative grid gap-6 p-5 sm:grid-cols-[170px_minmax(0,1fr)] sm:p-8">
+        <div className="[perspective:1200px]">
+          <Link to="/livro/$slug" params={{ slug: book.slug }} className="block">
+            <div className="cover-3d">
+              <BookCover
+                title={book.title.replace(/^Livro d[eoa] /i, "")}
+                subtitle={book.subtitle}
+                theme={book.cover_theme}
+                className="h-60 w-full shadow-2xl sm:h-72"
+              />
+            </div>
+          </Link>
+        </div>
 
         <div className="flex min-w-0 flex-col justify-center">
           <span className="text-[11px] tracking-[0.3em] text-primary uppercase">{label}</span>
@@ -42,7 +48,14 @@ export function NowReadingCard({
             <p className="mt-1 text-sm text-muted-foreground">{book.author}</p>
           ) : null}
 
-          <div className="mt-6">
+          {typeof remainingMinutes === "number" && remainingMinutes > 0 ? (
+            <p className="mt-3 inline-flex items-center gap-2 text-xs text-muted-foreground">
+              <Clock className="size-3.5" />
+              cerca de {remainingMinutes} min para terminar
+            </p>
+          ) : null}
+
+          <div className="mt-5">
             <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-primary to-gold transition-[width] duration-500"
@@ -59,7 +72,7 @@ export function NowReadingCard({
             <Button size="lg" asChild>
               <Link to="/ler/$slug" params={{ slug: book.slug }}>
                 <BookOpen className="size-4" />
-                Continuar leitura
+                Continuar sessão
               </Link>
             </Button>
             <Button size="lg" variant="ghost" asChild>
