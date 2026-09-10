@@ -27,7 +27,12 @@ export function SiteFooter() {
             </li>
             <li>
               <Link to="/carrinho" className="hover:text-foreground">
-                Minha biblioteca
+                Minha estante
+              </Link>
+            </li>
+            <li>
+              <Link to="/anotacoes" className="hover:text-foreground">
+                Anotações
               </Link>
             </li>
             <li>
