@@ -158,6 +158,7 @@ function Reader() {
     if (!document.fullscreenElement) {
       void el.requestFullscreen?.().catch(() => {});
       setFocusMode(true);
+      setBarHidden(true);
     } else {
       void document.exitFullscreen?.().catch(() => {});
       setFocusMode(false);
