@@ -55,6 +55,7 @@ export function StatsPanel({ booksDone }: { booksDone: number }) {
   const { stats } = useReadingStats();
   const { goal, setGoal } = useDailyGoal();
   const percent = Math.min(100, Math.round((stats.todayMinutes / Math.max(goal, 1)) * 100));
+  const finished = Math.max(stats.booksFinished, booksDone);
 
   return (
     <section className="rounded-2xl border border-border/60 bg-card/40 p-5 sm:p-6">
@@ -83,10 +84,14 @@ export function StatsPanel({ booksDone }: { booksDone: number }) {
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat icon={Flame} value={`${stats.streak}`} label="Dias seguidos" />
+          <Stat
+            icon={Flame}
+            value={`${stats.streak}`}
+            label={`Dias seguidos · recorde ${stats.longestStreak}`}
+          />
           <Stat icon={Clock} value={`${stats.totalMinutes}`} label="Minutos lidos" />
           <Stat icon={ScrollText} value={`${stats.totalPages}`} label="Páginas lidas" />
-          <Stat icon={BookCheck} value={`${booksDone}`} label="Livros concluídos" />
+          <Stat icon={BookCheck} value={`${finished}`} label="Livros concluídos" />
         </div>
       </div>
     </section>
