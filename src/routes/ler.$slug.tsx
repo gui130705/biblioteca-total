@@ -117,13 +117,43 @@ function Reader() {
 
   useEffect(() => {
     const onScroll = () => {
+      const y = window.scrollY;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setRatio(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      setRatio(max > 0 ? Math.min(1, Math.max(0, y / max)) : 0);
+      const delta = y - lastScroll.current;
+      if (y < 80) setBarHidden(false);
+      else if (delta > 8) setBarHidden(true);
+      else if (delta < -8) setBarHidden(false);
+      lastScroll.current = y;
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const onMove = (e: MouseEvent) => {
+      if (e.clientY < 70) setBarHidden(false);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("mousemove", onMove);
+    };
   }, [chapterIndex, content]);
+
+  const toggleFocus = useCallback(() => {
+    const el = document.documentElement;
+    if (!document.fullscreenElement) {
+      void el.requestFullscreen?.().catch(() => {});
+      setFocusMode(true);
+    } else {
+      void document.exitFullscreen?.().catch(() => {});
+      setFocusMode(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setFocusMode(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   const percent = useMemo(
     () => (content ? computePercent(content, chapterIndex, ratio) : 0),
