@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BookOpen, Library, Trash2 } from "lucide-react";
+import { Library, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageShell } from "@/components/PageShell";
 import { ShelfRow } from "@/components/ShelfRow";
+import { NowReadingCard } from "@/components/NowReadingCard";
 import { Button } from "@/components/ui/button";
 import { useBooks } from "@/lib/library";
 import { useCart } from "@/hooks/useCart";
