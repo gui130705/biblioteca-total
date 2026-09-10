@@ -473,7 +473,7 @@ function Reader() {
         ref={bodyRef}
         onMouseUp={handleSelection}
         onTouchEnd={handleSelection}
-        className="mx-auto px-5 pt-10 pb-28"
+        className="mx-auto px-5 pt-24 pb-32"
         style={{ maxWidth: prefs.width }}
       >
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{book.title}</p>
