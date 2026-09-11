@@ -87,28 +87,117 @@ export const Route = createFileRoute("/ler/$slug")({
   component: Reader,
 });
 
-const THEMES: { value: ReaderTheme; label: string }[] = [
-  { value: "escuro", label: "Escuro" },
-  { value: "sepia", label: "Sépia" },
-  { value: "papel", label: "Papel" },
+type OptionMeta = {
+  value: string;
+  title: string;
+  subtitle: string;
+  tooltip: string;
+};
+
+const THEMES: OptionMeta[] = [
+  {
+    value: "escuro",
+    title: "Escuro",
+    subtitle: "Carvão noturno",
+    tooltip: "Contraste suave para leitura noturna; reduz a fadiga ocular.",
+  },
+  {
+    value: "sepia",
+    title: "Sépia",
+    subtitle: "Papel aquecido",
+    tooltip: "Tom amarelado que relaxa a vista em leituras prolongadas.",
+  },
+  {
+    value: "papel",
+    title: "Claro",
+    subtitle: "Marfim diurno",
+    tooltip: "Fundo creme e texto carvão, ideal para ambientes claros.",
+  },
 ];
 
-const FONTS: { value: ReaderFont; label: string }[] = [
-  { value: "serif", label: "Serifada" },
-  { value: "sans", label: "Sem serifa" },
-  { value: "classica", label: "Clássica" },
+const FONTS: OptionMeta[] = [
+  {
+    value: "serif",
+    title: "Serifada",
+    subtitle: "Clássica e imersiva",
+    tooltip: "Letras com serifes que guiam o olhar ao longo da linha.",
+  },
+  {
+    value: "sans",
+    title: "Sem serifa",
+    subtitle: "Moderna e limpa",
+    tooltip: "Formas simples e diretas, ótima para telas de alta resolução.",
+  },
+  {
+    value: "classica",
+    title: "Livro",
+    subtitle: "Diagramação tradicional",
+    tooltip: "Tipografia de livro com proporções clássicas e acabamento editorial.",
+  },
 ];
 
-const MEASURES: { value: ReaderMeasure; label: string }[] = [
-  { value: "estreita", label: "Estreita" },
-  { value: "media", label: "Média" },
-  { value: "confortavel", label: "Confortável" },
+const MEASURES: OptionMeta[] = [
+  {
+    value: "estreita",
+    title: "Focada",
+    subtitle: "55 ch",
+    tooltip: "Linha curta que evita cansaço e mantém a atenção no parágrafo.",
+  },
+  {
+    value: "media",
+    title: "Equilibrada",
+    subtitle: "68 ch",
+    tooltip: "A medida clássica de leitura: conforto e ritmo equilibrados.",
+  },
+  {
+    value: "confortavel",
+    title: "Ampla",
+    subtitle: "80 ch",
+    tooltip: "Coluna mais larga para quem prefere menos quebras de linha.",
+  },
 ];
 
-const ALIGNMENTS: { value: ReaderAlign; label: string }[] = [
-  { value: "esquerda", label: "À esquerda" },
-  { value: "justificado", label: "Justificado" },
+const ALIGNMENTS: OptionMeta[] = [
+  {
+    value: "esquerda",
+    title: "À esquerda",
+    subtitle: "Quebra natural",
+    tooltip: "Alinhamento à esquerda com espaçamento uniforme entre palavras.",
+  },
+  {
+    value: "justificado",
+    title: "Justificado",
+    subtitle: "Com hifenização suave",
+    tooltip: "Bloco visual elegante, alinhado em ambas as margens.",
+  },
 ];
+
+function OptionButton({
+  active,
+  onClick,
+  title,
+  subtitle,
+  tooltip,
+}: OptionMeta & { active: boolean; onClick: () => void }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          size="sm"
+          variant={active ? "default" : "outline"}
+          onClick={onClick}
+          className="h-auto flex-col gap-0.5 py-2.5 leading-none"
+        >
+          <span>{title}</span>
+          <span className="text-[10px] font-normal opacity-60">{subtitle}</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[220px] text-center">
+        <p>{tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 function Reader() {
   const { slug } = Route.useParams();
