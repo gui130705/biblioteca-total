@@ -26,9 +26,9 @@ export const DEFAULT_PREFS: ReaderPrefs = {
 };
 
 export const MEASURE_CH: Record<ReaderMeasure, number> = {
-  estreita: 58,
-  media: 66,
-  confortavel: 74,
+  estreita: 55,
+  media: 68,
+  confortavel: 80,
 };
 
 export const READER_FONT_STACK: Record<ReaderFont, string> = {
