@@ -90,6 +90,18 @@ const THEMES: { value: ReaderTheme; label: string }[] = [
 const FONTS: { value: ReaderFont; label: string }[] = [
   { value: "serif", label: "Serifada" },
   { value: "sans", label: "Sem serifa" },
+  { value: "classica", label: "Clássica" },
+];
+
+const MEASURES: { value: ReaderMeasure; label: string }[] = [
+  { value: "estreita", label: "Estreita" },
+  { value: "media", label: "Média" },
+  { value: "confortavel", label: "Confortável" },
+];
+
+const ALIGNMENTS: { value: ReaderAlign; label: string }[] = [
+  { value: "esquerda", label: "À esquerda" },
+  { value: "justificado", label: "Justificado" },
 ];
 
 function Reader() {
