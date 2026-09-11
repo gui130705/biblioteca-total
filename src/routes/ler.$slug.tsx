@@ -567,105 +567,203 @@ function Reader() {
             </SheetContent>
           </Sheet>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Ajustes de leitura">
-                <Settings2 className="size-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-80 space-y-5">
-              <div>
-                <p className="text-xs font-medium tracking-wide uppercase opacity-70">Tema</p>
-                <div className="mt-2 grid grid-cols-3 gap-2">
-                  {THEMES.map((t) => (
-                    <Button
-                      key={t.value}
-                      size="sm"
-                      variant={prefs.theme === t.value ? "default" : "outline"}
-                      onClick={() => update({ theme: t.value })}
-                    >
-                      {t.label}
-                    </Button>
-                  ))}
+          <TooltipProvider delayDuration={400}>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Ajustes de leitura">
+                  <Settings2 className="size-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-80 space-y-5">
+                <div>
+                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                    Ambiente visual
+                  </p>
+                  <p className="mt-0.5 text-[11px] opacity-55">
+                    A luz do leitor muda o clima da página sem alterar o conteúdo.
+                  </p>
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    {THEMES.map((t) => (
+                      <OptionButton
+                        key={t.value}
+                        {...t}
+                        active={prefs.theme === t.value}
+                        onClick={() => update({ theme: t.value as ReaderTheme })}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p className="text-xs font-medium tracking-wide uppercase opacity-70">Fonte</p>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  {FONTS.map((f) => (
-                    <Button
-                      key={f.value}
-                      size="sm"
-                      variant={prefs.font === f.value ? "default" : "outline"}
-                      onClick={() => update({ font: f.value })}
-                    >
-                      {f.label}
-                    </Button>
-                  ))}
+
+                <div>
+                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">Tipografia</p>
+                  <p className="mt-0.5 text-[11px] opacity-55">
+                    Escolha a voz tipográfica que melhor acompanha o texto.
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    {FONTS.map((f) => (
+                      <OptionButton
+                        key={f.value}
+                        {...f}
+                        active={prefs.font === f.value}
+                        onClick={() => update({ font: f.value as ReaderFont })}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p className="text-xs font-medium tracking-wide uppercase opacity-70">
-                  Tamanho do texto · {prefs.fontSize}px
-                </p>
-                <Slider
-                  className="mt-3"
-                  min={15}
-                  max={28}
-                  step={1}
-                  value={[prefs.fontSize]}
-                  onValueChange={([v]) => update({ fontSize: v ?? prefs.fontSize })}
-                />
-              </div>
-              <div>
-                <p className="text-xs font-medium tracking-wide uppercase opacity-70">
-                  Entrelinha · {prefs.lineHeight.toFixed(1)}
-                </p>
-                <Slider
-                  className="mt-3"
-                  min={1.4}
-                  max={2.4}
-                  step={0.1}
-                  value={[prefs.lineHeight]}
-                  onValueChange={([v]) => update({ lineHeight: v ?? prefs.lineHeight })}
-                />
-              </div>
-              <div>
-                <p className="text-xs font-medium tracking-wide uppercase opacity-70">
-                  Largura da página
-                </p>
-                <div className="mt-2 grid grid-cols-3 gap-2">
-                  {MEASURES.map((m) => (
-                    <Button
-                      key={m.value}
-                      size="sm"
-                      variant={prefs.measure === m.value ? "default" : "outline"}
-                      onClick={() => update({ measure: m.value })}
-                    >
-                      {m.label}
-                    </Button>
-                  ))}
+
+                <div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                      Escala da fonte
+                    </p>
+                    <span className="text-[11px] opacity-70 tabular-nums">
+                      {prefs.fontSize}px
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="size-8 shrink-0"
+                          aria-label="Diminuir fonte"
+                          onClick={() =>
+                            update({ fontSize: Math.max(15, prefs.fontSize - 1) })
+                          }
+                        >
+                          <Minus className="size-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Reduz o tamanho da letra em 1 px.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Slider
+                      className="flex-1"
+                      min={15}
+                      max={28}
+                      step={1}
+                      value={[prefs.fontSize]}
+                      onValueChange={([v]) => update({ fontSize: v ?? prefs.fontSize })}
+                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="size-8 shrink-0"
+                          aria-label="Aumentar fonte"
+                          onClick={() =>
+                            update({ fontSize: Math.min(28, prefs.fontSize + 1) })
+                          }
+                        >
+                          <Plus className="size-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Aumenta o tamanho da letra em 1 px.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p className="text-xs font-medium tracking-wide uppercase opacity-70">
-                  Alinhamento
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  {ALIGNMENTS.map((a) => (
-                    <Button
-                      key={a.value}
-                      size="sm"
-                      variant={prefs.align === a.value ? "default" : "outline"}
-                      onClick={() => update({ align: a.value })}
-                    >
-                      {a.label}
-                    </Button>
-                  ))}
+
+                <div>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                      Espaçamento entre linhas
+                    </p>
+                    <span className="text-[11px] opacity-70 tabular-nums">
+                      {prefs.lineHeight.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="size-8 shrink-0"
+                          aria-label="Diminuir entrelinha"
+                          onClick={() =>
+                            update({ lineHeight: Math.max(1.4, prefs.lineHeight - 0.1) })
+                          }
+                        >
+                          <Minus className="size-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Linhas mais compactas para blocos densos.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Slider
+                      className="flex-1"
+                      min={1.4}
+                      max={2.4}
+                      step={0.1}
+                      value={[prefs.lineHeight]}
+                      onValueChange={([v]) =>
+                        update({ lineHeight: v ?? prefs.lineHeight })
+                      }
+                    />
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="size-8 shrink-0"
+                          aria-label="Aumentar entrelinha"
+                          onClick={() =>
+                            update({ lineHeight: Math.min(2.4, prefs.lineHeight + 0.1) })
+                          }
+                        >
+                          <Plus className="size-3.5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        <p>Linhas mais soltas para leitura relaxada.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+
+                <div>
+                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                    Largura da coluna
+                  </p>
+                  <p className="mt-0.5 text-[11px] opacity-55">
+                    Uma medida equilibrada reduz o cansaço visual.
+                  </p>
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    {MEASURES.map((m) => (
+                      <OptionButton
+                        key={m.value}
+                        {...m}
+                        active={prefs.measure === m.value}
+                        onClick={() => update({ measure: m.value as ReaderMeasure })}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                    Disposição do texto
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    {ALIGNMENTS.map((a) => (
+                      <OptionButton
+                        key={a.value}
+                        {...a}
+                        active={prefs.align === a.value}
+                        onClick={() => update({ align: a.value as ReaderAlign })}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </TooltipProvider>
 
           {book.pdf_url ? (
             <Button variant="ghost" size="icon" asChild aria-label="Baixar PDF original">
