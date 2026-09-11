@@ -32,6 +32,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useBook } from "@/lib/library";
 import { useLogSession } from "@/lib/stats";
 import { useAuth } from "@/hooks/useAuth";
