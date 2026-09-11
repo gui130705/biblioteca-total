@@ -537,16 +537,37 @@ function Reader() {
               </div>
               <div>
                 <p className="text-xs font-medium tracking-wide uppercase opacity-70">
-                  Largura · {prefs.width}px
+                  Largura da página
                 </p>
-                <Slider
-                  className="mt-3"
-                  min={520}
-                  max={900}
-                  step={20}
-                  value={[prefs.width]}
-                  onValueChange={([v]) => update({ width: v ?? prefs.width })}
-                />
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {MEASURES.map((m) => (
+                    <Button
+                      key={m.value}
+                      size="sm"
+                      variant={prefs.measure === m.value ? "default" : "outline"}
+                      onClick={() => update({ measure: m.value })}
+                    >
+                      {m.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                  Alinhamento
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {ALIGNMENTS.map((a) => (
+                    <Button
+                      key={a.value}
+                      size="sm"
+                      variant={prefs.align === a.value ? "default" : "outline"}
+                      onClick={() => update({ align: a.value })}
+                    >
+                      {a.label}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </PopoverContent>
           </Popover>
