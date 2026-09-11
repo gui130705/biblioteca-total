@@ -35,7 +35,17 @@ const LOCAL_GOAL_KEY = "bp:daily-goal";
 type LocalSession = { bookId: string | null; minutes: number; pages: number; date: string };
 
 function todayKey(d = new Date()) {
-  return d.toISOString().slice(0, 10);
+  // Data civil no fuso local (YYYY-MM-DD), evitando o desvio UTC de toISOString().
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/** Diferença em dias civis entre duas chaves YYYY-MM-DD (b - a). */
+function civilDayDiff(a: string, b: string) {
+  const ms = new Date(`${b}T12:00:00`).getTime() - new Date(`${a}T12:00:00`).getTime();
+  return Math.round(ms / 86400000);
 }
 
 function readLocal(): LocalSession[] {
@@ -155,10 +165,12 @@ export function useSyncLocalSessions() {
     if (!user) return;
     const pending = readLocal();
     if (pending.length === 0) return;
+    // Sincroniza em ordem cronológica estritamente crescente para o streak ser calculado corretamente.
+    const ordered = [...pending].sort((a, b) => a.date.localeCompare(b.date));
     let active = true;
     void (async () => {
       try {
-        for (const s of pending) {
+        for (const s of ordered) {
           await pushSession({ bookId: s.bookId, minutes: s.minutes, pages: s.pages, date: s.date });
         }
         writeLocal([]);
@@ -232,8 +244,9 @@ export function useReadingStats() {
 
       const todayMinutes = (sessions ?? []).reduce((sum, s) => sum + (Number(s.minutes) || 0), 0);
       const stats = (row ?? null) as ReadingStatsRow | null;
+      // Streak expira apenas quando um dia civil inteiro foi pulado (> 1 dia sem leitura).
       const stale = stats?.last_read_date
-        ? (Date.now() - new Date(`${stats.last_read_date}T00:00:00Z`).getTime()) / 86400000 > 1.5
+        ? civilDayDiff(stats.last_read_date, todayKey()) > 1
         : true;
 
       return {
