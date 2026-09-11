@@ -586,24 +586,26 @@ function Reader() {
         ref={bodyRef}
         onMouseUp={handleSelection}
         onTouchEnd={handleSelection}
-        className="mx-auto px-5 pt-24 pb-32"
-        style={{ maxWidth: prefs.width }}
+        className="mx-auto w-full px-5 pt-24 pb-32"
+        style={{
+          maxWidth: `${MEASURE_CH[prefs.measure]}ch`,
+          fontSize: `${prefs.fontSize}px`,
+        }}
       >
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{book.title}</p>
         <h1
           className="mt-3 text-2xl font-bold sm:text-3xl"
-          style={{ fontFamily: prefs.font === "serif" ? "var(--font-display)" : undefined }}
+          style={{ fontFamily: READER_FONT_STACK[prefs.font] }}
         >
           {chapter.title}
         </h1>
 
         <div
-          className="reader-text mt-8"
+          className={cn("reader-text mt-8", `reader-align-${prefs.align}`)}
           style={{
             fontSize: `${prefs.fontSize}px`,
             lineHeight: prefs.lineHeight,
-            fontFamily:
-              prefs.font === "serif" ? "Georgia, 'Times New Roman', serif" : "var(--font-sans)",
+            fontFamily: READER_FONT_STACK[prefs.font],
           }}
         >
           {chapter.paragraphs.map((p, i) => (
@@ -611,7 +613,7 @@ function Reader() {
               key={i}
               data-paragraph={i}
               className={cn(
-                "mb-5",
+                i === 0 && p.length > 80 && "reader-dropcap",
                 highlightedParagraphs.has(i) && "reader-marked",
               )}
             >
