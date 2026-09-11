@@ -35,7 +35,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useBook } from "@/lib/library";
 import { useLogSession } from "@/lib/stats";
 import { useAuth } from "@/hooks/useAuth";
-import { useReaderPrefs, type ReaderFont, type ReaderTheme } from "@/hooks/useReaderPrefs";
+import {
+  useReaderPrefs,
+  MEASURE_CH,
+  READER_FONT_STACK,
+  type ReaderAlign,
+  type ReaderFont,
+  type ReaderMeasure,
+  type ReaderTheme,
+} from "@/hooks/useReaderPrefs";
 import {
   computePercent,
   formatMinutes,
@@ -82,6 +90,18 @@ const THEMES: { value: ReaderTheme; label: string }[] = [
 const FONTS: { value: ReaderFont; label: string }[] = [
   { value: "serif", label: "Serifada" },
   { value: "sans", label: "Sem serifa" },
+  { value: "classica", label: "Clássica" },
+];
+
+const MEASURES: { value: ReaderMeasure; label: string }[] = [
+  { value: "estreita", label: "Estreita" },
+  { value: "media", label: "Média" },
+  { value: "confortavel", label: "Confortável" },
+];
+
+const ALIGNMENTS: { value: ReaderAlign; label: string }[] = [
+  { value: "esquerda", label: "À esquerda" },
+  { value: "justificado", label: "Justificado" },
 ];
 
 function Reader() {
@@ -517,16 +537,37 @@ function Reader() {
               </div>
               <div>
                 <p className="text-xs font-medium tracking-wide uppercase opacity-70">
-                  Largura · {prefs.width}px
+                  Largura da página
                 </p>
-                <Slider
-                  className="mt-3"
-                  min={520}
-                  max={900}
-                  step={20}
-                  value={[prefs.width]}
-                  onValueChange={([v]) => update({ width: v ?? prefs.width })}
-                />
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {MEASURES.map((m) => (
+                    <Button
+                      key={m.value}
+                      size="sm"
+                      variant={prefs.measure === m.value ? "default" : "outline"}
+                      onClick={() => update({ measure: m.value })}
+                    >
+                      {m.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                  Alinhamento
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {ALIGNMENTS.map((a) => (
+                    <Button
+                      key={a.value}
+                      size="sm"
+                      variant={prefs.align === a.value ? "default" : "outline"}
+                      onClick={() => update({ align: a.value })}
+                    >
+                      {a.label}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </PopoverContent>
           </Popover>
@@ -545,24 +586,26 @@ function Reader() {
         ref={bodyRef}
         onMouseUp={handleSelection}
         onTouchEnd={handleSelection}
-        className="mx-auto px-5 pt-24 pb-32"
-        style={{ maxWidth: prefs.width }}
+        className="mx-auto w-full px-5 pt-24 pb-32"
+        style={{
+          maxWidth: `${MEASURE_CH[prefs.measure]}ch`,
+          fontSize: `${prefs.fontSize}px`,
+        }}
       >
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{book.title}</p>
         <h1
           className="mt-3 text-2xl font-bold sm:text-3xl"
-          style={{ fontFamily: prefs.font === "serif" ? "var(--font-display)" : undefined }}
+          style={{ fontFamily: READER_FONT_STACK[prefs.font] }}
         >
           {chapter.title}
         </h1>
 
         <div
-          className="reader-text mt-8"
+          className={cn("reader-text mt-8", `reader-align-${prefs.align}`)}
           style={{
             fontSize: `${prefs.fontSize}px`,
             lineHeight: prefs.lineHeight,
-            fontFamily:
-              prefs.font === "serif" ? "Georgia, 'Times New Roman', serif" : "var(--font-sans)",
+            fontFamily: READER_FONT_STACK[prefs.font],
           }}
         >
           {chapter.paragraphs.map((p, i) => (
@@ -570,7 +613,7 @@ function Reader() {
               key={i}
               data-paragraph={i}
               className={cn(
-                "mb-5",
+                i === 0 && p.length > 80 && "reader-dropcap",
                 highlightedParagraphs.has(i) && "reader-marked",
               )}
             >
