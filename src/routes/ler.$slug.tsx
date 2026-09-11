@@ -35,7 +35,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useBook } from "@/lib/library";
 import { useLogSession } from "@/lib/stats";
 import { useAuth } from "@/hooks/useAuth";
-import { useReaderPrefs, type ReaderFont, type ReaderTheme } from "@/hooks/useReaderPrefs";
+import {
+  useReaderPrefs,
+  MEASURE_CH,
+  READER_FONT_STACK,
+  type ReaderAlign,
+  type ReaderFont,
+  type ReaderMeasure,
+  type ReaderTheme,
+} from "@/hooks/useReaderPrefs";
 import {
   computePercent,
   formatMinutes,
