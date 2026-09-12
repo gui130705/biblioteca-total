@@ -178,7 +178,8 @@ function OptionButton({
   title,
   subtitle,
   tooltip,
-}: OptionMeta & { active: boolean; onClick: () => void }) {
+  theme,
+}: OptionMeta & { active: boolean; onClick: () => void; theme: ReaderTheme }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -186,13 +187,23 @@ function OptionButton({
           size="sm"
           variant={active ? "default" : "outline"}
           onClick={onClick}
-          className="h-auto flex-col gap-0.5 py-2.5 leading-none"
+          aria-pressed={active}
+          className={cn(
+            "h-auto min-h-12 min-w-0 flex-col gap-1 whitespace-normal py-2.5 text-center text-[13px] leading-tight focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            active && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+          )}
         >
           <span>{title}</span>
-          <span className="text-[10px] font-normal opacity-60">{subtitle}</span>
+          <span className="text-xs font-normal leading-snug opacity-85">{subtitle}</span>
         </Button>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="max-w-[220px] text-center">
+      <TooltipContent
+        side="bottom"
+        className={cn(
+          `reader-${theme}`,
+          "max-w-[260px] border border-border bg-popover px-3 py-2 text-center text-xs leading-relaxed text-popover-foreground shadow-md",
+        )}
+      >
         <p>{tooltip}</p>
       </TooltipContent>
     </Tooltip>
@@ -574,12 +585,18 @@ function Reader() {
                   <Settings2 className="size-4" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-80 space-y-5">
+              <PopoverContent
+                align="end"
+                className={cn(
+                  `reader-${prefs.theme}`,
+                  "w-80 space-y-6 border-border bg-popover p-5 text-popover-foreground shadow-xl",
+                )}
+              >
                 <div>
-                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                  <p className="text-sm font-semibold">
                     Ambiente visual
                   </p>
-                  <p className="mt-0.5 text-[11px] opacity-55">
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     A luz do leitor muda o clima da página sem alterar o conteúdo.
                   </p>
                   <div className="mt-2 grid grid-cols-3 gap-2">
@@ -587,6 +604,7 @@ function Reader() {
                       <OptionButton
                         key={t.value}
                         {...t}
+                        theme={prefs.theme}
                         active={prefs.theme === t.value}
                         onClick={() => update({ theme: t.value as ReaderTheme })}
                       />
@@ -595,8 +613,8 @@ function Reader() {
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">Tipografia</p>
-                  <p className="mt-0.5 text-[11px] opacity-55">
+                  <p className="text-sm font-semibold">Tipografia</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     Escolha a voz tipográfica que melhor acompanha o texto.
                   </p>
                   <div className="mt-2 grid grid-cols-2 gap-2">
@@ -604,6 +622,7 @@ function Reader() {
                       <OptionButton
                         key={f.value}
                         {...f}
+                        theme={prefs.theme}
                         active={prefs.font === f.value}
                         onClick={() => update({ font: f.value as ReaderFont })}
                       />
@@ -613,10 +632,10 @@ function Reader() {
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                    <p className="text-sm font-semibold">
                       Escala da fonte
                     </p>
-                    <span className="text-[11px] opacity-70 tabular-nums">
+                    <span className="text-xs font-medium text-muted-foreground tabular-nums">
                       {prefs.fontSize}px
                     </span>
                   </div>
@@ -635,7 +654,7 @@ function Reader() {
                           <Minus className="size-3.5" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent side="bottom">
+                      <TooltipContent side="bottom" className={cn(`reader-${prefs.theme}`, "max-w-[260px] border border-border bg-popover px-3 py-2 text-xs leading-relaxed text-popover-foreground shadow-md")}>
                         <p>Reduz o tamanho da letra em 1 px.</p>
                       </TooltipContent>
                     </Tooltip>
@@ -661,7 +680,7 @@ function Reader() {
                           <Plus className="size-3.5" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent side="bottom">
+                      <TooltipContent side="bottom" className={cn(`reader-${prefs.theme}`, "max-w-[260px] border border-border bg-popover px-3 py-2 text-xs leading-relaxed text-popover-foreground shadow-md")}>
                         <p>Aumenta o tamanho da letra em 1 px.</p>
                       </TooltipContent>
                     </Tooltip>
@@ -670,10 +689,10 @@ function Reader() {
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                    <p className="text-sm font-semibold">
                       Espaçamento entre linhas
                     </p>
-                    <span className="text-[11px] opacity-70 tabular-nums">
+                    <span className="text-xs font-medium text-muted-foreground tabular-nums">
                       {prefs.lineHeight.toFixed(2)}
                     </span>
                   </div>
@@ -692,7 +711,7 @@ function Reader() {
                           <Minus className="size-3.5" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent side="bottom">
+                      <TooltipContent side="bottom" className={cn(`reader-${prefs.theme}`, "max-w-[260px] border border-border bg-popover px-3 py-2 text-xs leading-relaxed text-popover-foreground shadow-md")}>
                         <p>Linhas mais compactas para blocos densos.</p>
                       </TooltipContent>
                     </Tooltip>
@@ -720,7 +739,7 @@ function Reader() {
                           <Plus className="size-3.5" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent side="bottom">
+                      <TooltipContent side="bottom" className={cn(`reader-${prefs.theme}`, "max-w-[260px] border border-border bg-popover px-3 py-2 text-xs leading-relaxed text-popover-foreground shadow-md")}>
                         <p>Linhas mais soltas para leitura relaxada.</p>
                       </TooltipContent>
                     </Tooltip>
@@ -728,10 +747,10 @@ function Reader() {
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                  <p className="text-sm font-semibold">
                     Largura da coluna
                   </p>
-                  <p className="mt-0.5 text-[11px] opacity-55">
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     Uma medida equilibrada reduz o cansaço visual.
                   </p>
                   <div className="mt-2 grid grid-cols-3 gap-2">
@@ -739,6 +758,7 @@ function Reader() {
                       <OptionButton
                         key={m.value}
                         {...m}
+                        theme={prefs.theme}
                         active={prefs.measure === m.value}
                         onClick={() => update({ measure: m.value as ReaderMeasure })}
                       />
@@ -747,14 +767,18 @@ function Reader() {
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium tracking-wide uppercase opacity-70">
+                  <p className="text-sm font-semibold">
                     Disposição do texto
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Ajuste o desenho do parágrafo ao seu ritmo de leitura.
                   </p>
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     {ALIGNMENTS.map((a) => (
                       <OptionButton
                         key={a.value}
                         {...a}
+                        theme={prefs.theme}
                         active={prefs.align === a.value}
                         onClick={() => update({ align: a.value as ReaderAlign })}
                       />
