@@ -189,12 +189,12 @@ function OptionButton({
           onClick={onClick}
           aria-pressed={active}
           className={cn(
-            "h-auto min-h-12 flex-col gap-1 py-2.5 text-[13px] leading-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "h-auto min-h-12 min-w-0 flex-col gap-1 whitespace-normal py-2.5 text-center text-[13px] leading-tight focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             active && "ring-2 ring-primary ring-offset-2 ring-offset-background",
           )}
         >
           <span>{title}</span>
-          <span className="text-xs font-normal opacity-85">{subtitle}</span>
+          <span className="text-xs font-normal leading-snug opacity-85">{subtitle}</span>
         </Button>
       </TooltipTrigger>
       <TooltipContent
