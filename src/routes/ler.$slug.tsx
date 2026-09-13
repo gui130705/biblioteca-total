@@ -185,23 +185,25 @@ function OptionButton({
       <TooltipTrigger asChild>
         <Button
           size="sm"
-          variant={active ? "default" : "outline"}
+          variant="outline"
           onClick={onClick}
           aria-pressed={active}
           className={cn(
-            "h-auto min-h-12 min-w-0 flex-col gap-1 whitespace-normal py-2.5 text-center text-[13px] leading-tight focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            active && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+            "relative h-auto min-h-12 min-w-0 flex-col gap-1 whitespace-normal border-border bg-background py-2.5 text-center text-[13px] leading-tight text-foreground hover:border-primary/70 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            active &&
+              "border-primary bg-primary text-primary-foreground shadow-sm hover:border-primary hover:bg-primary hover:text-primary-foreground",
           )}
         >
-          <span>{title}</span>
-          <span className="text-xs font-normal leading-snug opacity-85">{subtitle}</span>
+          {active ? <Check className="absolute top-1.5 right-1.5 size-3" aria-hidden="true" /> : null}
+          <span className="px-1">{title}</span>
+          <span className="px-1 text-xs font-normal leading-snug opacity-90">{subtitle}</span>
         </Button>
       </TooltipTrigger>
       <TooltipContent
         side="bottom"
         className={cn(
           `reader-${theme}`,
-          "max-w-[260px] border border-border bg-popover px-3 py-2 text-center text-xs leading-relaxed text-popover-foreground shadow-md",
+          "max-w-[260px] border border-border bg-popover px-3 py-2 text-center text-xs leading-relaxed text-popover-foreground shadow-lg",
         )}
       >
         <p>{tooltip}</p>
@@ -560,19 +562,24 @@ function Reader() {
               </SheetHeader>
               <nav className="mt-2 flex flex-col gap-1 px-4 pb-8">
                 {content.chapters.map((c, i) => (
-                  <button
+                    <Button
                     key={`${c.title}-${i}`}
+                      type="button"
+                      variant="ghost"
                     onClick={() => goChapter(i)}
+                      aria-current={i === chapterIndex ? "location" : undefined}
                     className={cn(
-                      "rounded-md px-3 py-2 text-left text-sm hover:bg-accent",
-                      i === chapterIndex && "bg-accent font-medium",
+                       "h-auto w-full justify-start rounded-md px-3 py-2 text-left text-sm whitespace-normal hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                       i === chapterIndex && "border border-primary bg-accent font-medium text-accent-foreground",
                     )}
                   >
-                    <span className="line-clamp-2">{c.title}</span>
-                    <span className="text-xs opacity-60">
-                      {formatMinutes(readingMinutes(c.words))}
-                    </span>
-                  </button>
+                      <span className="min-w-0 flex-1">
+                        <span className="line-clamp-2">{c.title}</span>
+                        <span className="block text-xs opacity-75">
+                          {formatMinutes(readingMinutes(c.words))}
+                        </span>
+                      </span>
+                    </Button>
                 ))}
               </nav>
             </SheetContent>
@@ -581,7 +588,12 @@ function Reader() {
           <TooltipProvider delayDuration={400}>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Ajustes de leitura">
+                 <Button
+                   variant="ghost"
+                   size="icon"
+                   aria-label="Ajustes de leitura"
+                   className="hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+                 >
                   <Settings2 className="size-4" />
                 </Button>
               </PopoverTrigger>
@@ -589,7 +601,7 @@ function Reader() {
                 align="end"
                 className={cn(
                   `reader-${prefs.theme}`,
-                  "w-80 space-y-6 border-border bg-popover p-5 text-popover-foreground shadow-xl",
+                   "max-h-[min(82vh,720px)] w-[min(22rem,calc(100vw-1.5rem))] space-y-6 overflow-y-auto border-border bg-popover p-5 text-popover-foreground shadow-xl",
                 )}
               >
                 <div>
@@ -645,7 +657,7 @@ function Reader() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="size-8 shrink-0"
+                           className="size-8 shrink-0 border-border bg-background text-foreground hover:border-primary/70 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           aria-label="Diminuir fonte"
                           onClick={() =>
                             update({ fontSize: Math.max(15, prefs.fontSize - 1) })
@@ -660,6 +672,7 @@ function Reader() {
                     </Tooltip>
                     <Slider
                       className="flex-1"
+                      aria-label="Escala da fonte"
                       min={15}
                       max={28}
                       step={1}
@@ -671,7 +684,7 @@ function Reader() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="size-8 shrink-0"
+                           className="size-8 shrink-0 border-border bg-background text-foreground hover:border-primary/70 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           aria-label="Aumentar fonte"
                           onClick={() =>
                             update({ fontSize: Math.min(28, prefs.fontSize + 1) })
@@ -702,7 +715,7 @@ function Reader() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="size-8 shrink-0"
+                           className="size-8 shrink-0 border-border bg-background text-foreground hover:border-primary/70 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           aria-label="Diminuir entrelinha"
                           onClick={() =>
                             update({ lineHeight: Math.max(1.4, prefs.lineHeight - 0.1) })
@@ -717,6 +730,7 @@ function Reader() {
                     </Tooltip>
                     <Slider
                       className="flex-1"
+                      aria-label="Espaçamento entre linhas"
                       min={1.4}
                       max={2.4}
                       step={0.1}
@@ -730,7 +744,7 @@ function Reader() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="size-8 shrink-0"
+                           className="size-8 shrink-0 border-border bg-background text-foreground hover:border-primary/70 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           aria-label="Aumentar entrelinha"
                           onClick={() =>
                             update({ lineHeight: Math.min(2.4, prefs.lineHeight + 0.1) })
@@ -870,7 +884,12 @@ function Reader() {
       </main>
 
       {selection ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 p-4 backdrop-blur">
+         <div
+           className={cn(
+             `reader-${prefs.theme}`,
+             "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-4 text-card-foreground backdrop-blur",
+           )}
+         >
           <div className="mx-auto max-w-3xl space-y-3">
             <p className="line-clamp-2 text-sm text-muted-foreground italic">“{selection.text}”</p>
             <div className="flex flex-wrap gap-1.5">
@@ -879,7 +898,12 @@ function Reader() {
                   key={k.value}
                   size="sm"
                   variant={kind === k.value ? "default" : "outline"}
-                  className="h-7 px-3 text-xs"
+                   aria-pressed={kind === k.value}
+                   className={cn(
+                     "h-8 border-border px-3 text-xs hover:border-primary/70 hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                     kind === k.value &&
+                       "border-primary bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                   )}
                   onClick={() => setKind(k.value)}
                 >
                   {k.label}
