@@ -8,3 +8,4 @@
 - [x] Liberar gratuitamente todos os títulos e remover compra/checkout pago da experiência
 - [x] Atualizar detalhes, biblioteca, carrinho e mensagens para acesso grátis
 - [x] Validar visualmente as rotas principais e manter o build aprovado
+- [x] Calibrar hover, foco por teclado, seleção, sliders e tooltips do leitor nos três temas
