@@ -533,8 +533,8 @@ function Reader() {
             aria-label="Alternar tema de leitura"
             onClick={() => {
               const order: ReaderTheme[] = ["escuro", "sepia", "papel"];
-              const next = order[(order.indexOf(prefs.theme) + 1) % order.length]!;
-              update({ theme: next });
+               const next = order[(order.indexOf(prefs.theme) + 1) % order.length];
+               if (next) update({ theme: next });
             }}
           >
             {prefs.theme === "escuro" ? <Moon className="size-4" /> : <Sun className="size-4" />}
