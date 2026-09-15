@@ -11,3 +11,4 @@
 - [x] Calibrar hover, foco por teclado, seleção, sliders e tooltips do leitor nos três temas
 - [x] Adicionar capas ilustradas temáticas aos 9 livros em todo o acervo
 - [x] Adicionar apoio via PIX no menu principal e mobile, com cópia e feedback
+- [x] Exibir card de apoio via PIX abaixo do acesso e criação de conta
