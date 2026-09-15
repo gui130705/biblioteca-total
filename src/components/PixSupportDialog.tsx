@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-const PIX_KEY = "11971616496";
+export const PIX_KEY = "11971616496";
+export const PIX_NAME = "Wagner S. Apolinário";
 
-async function copyPixKey() {
+export async function copyPixKey() {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(PIX_KEY);
     return;
@@ -31,13 +32,7 @@ async function copyPixKey() {
   if (!copied) throw new Error("Não foi possível copiar");
 }
 
-export function PixSupportDialog({
-  mobile = false,
-  onOpen,
-}: {
-  mobile?: boolean;
-  onOpen?: () => void;
-}) {
+function usePixCopy() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -50,6 +45,55 @@ export function PixSupportDialog({
       toast.error("Não foi possível copiar. Selecione a chave manualmente.");
     }
   };
+
+  return { copied, setCopied, handleCopy };
+}
+
+export function PixSupportCard() {
+  const { copied, handleCopy } = usePixCopy();
+
+  return (
+    <aside className="w-full max-w-md overflow-hidden rounded-lg border border-border bg-card">
+      <div className="flex items-start gap-4 border-b border-border bg-accent/30 px-6 py-5">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-primary">
+          <HeartHandshake className="size-5" />
+        </div>
+        <div>
+          <h2 className="font-display text-lg font-bold">Apoie a Biblioteca</h2>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            Ajude a manter o acervo gratuito e a leitura em evolução.
+          </p>
+        </div>
+      </div>
+      <div className="space-y-4 px-6 py-5">
+        <div className="flex items-start gap-3">
+          <Smartphone className="mt-0.5 size-4 text-muted-foreground" />
+          <div>
+            <p className="text-xs text-muted-foreground">Chave PIX · Celular</p>
+            <p className="mt-1 font-mono text-base font-semibold">{PIX_KEY}</p>
+          </div>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">Nome</p>
+          <p className="mt-1 text-sm font-medium">{PIX_NAME}</p>
+        </div>
+        <Button variant="outline" className="w-full" onClick={handleCopy} aria-live="polite">
+          {copied ? <Check className="size-4 text-primary" /> : <Copy className="size-4" />}
+          {copied ? "Chave copiada" : "Copiar chave PIX"}
+        </Button>
+      </div>
+    </aside>
+  );
+}
+
+export function PixSupportDialog({
+  mobile = false,
+  onOpen,
+}: {
+  mobile?: boolean;
+  onOpen?: () => void;
+}) {
+  const { copied, setCopied, handleCopy } = usePixCopy();
 
   return (
     <Dialog
@@ -91,7 +135,7 @@ export function PixSupportDialog({
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Nome</p>
-            <p className="mt-1 text-sm font-medium">Wagner S. Apolinário</p>
+            <p className="mt-1 text-sm font-medium">{PIX_NAME}</p>
           </div>
           <Button className="w-full" onClick={handleCopy} aria-live="polite">
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />}

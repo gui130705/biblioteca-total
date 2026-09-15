@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PixSupportCard } from "@/components/PixSupportDialog";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/auth")({
@@ -67,7 +68,8 @@ function AuthPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-16">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8">
+      <div className="w-full max-w-md space-y-5">
+        <section className="rounded-lg border border-border bg-card p-8">
         <Link to="/" className="flex items-center justify-center gap-2">
           <BookOpen className="size-5 text-primary" />
           <span className="font-display text-sm font-bold tracking-[0.2em] text-primary uppercase">
@@ -132,6 +134,8 @@ function AuthPage() {
             {mode === "login" ? "Criar conta" : "Entrar"}
           </button>
         </p>
+        </section>
+        <PixSupportCard />
       </div>
     </div>
   );
