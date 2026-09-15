@@ -87,7 +87,7 @@ export function SiteHeader() {
               Admin
             </Link>
           ) : null}
-          <PixSupportDialog mobile onOpen={() => setOpen(false)} />
+          <PixSupportDialog mobile />
         </nav>
       ) : null}
     </header>
