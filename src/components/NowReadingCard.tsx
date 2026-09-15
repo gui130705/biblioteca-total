@@ -33,6 +33,7 @@ export function NowReadingCard({
                 title={book.title.replace(/^Livro d[eoa] /i, "")}
                 subtitle={book.subtitle}
                 theme={book.cover_theme}
+                slug={book.slug}
                 className="h-60 w-full shadow-2xl sm:h-72"
               />
             </div>

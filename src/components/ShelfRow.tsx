@@ -40,6 +40,7 @@ export function ShelfRow({
                 <BookCover
                   title={book.title.replace(/^Livro d[eoa] /i, "")}
                   theme={book.cover_theme}
+                  slug={book.slug}
                   className="h-24 w-full shrink-0 sm:h-28"
                 />
                 <div className="min-w-0">

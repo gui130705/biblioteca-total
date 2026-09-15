@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, User, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PixSupportDialog } from "@/components/PixSupportDialog";
 import { useAuth } from "@/hooks/useAuth";
 
 const links = [
@@ -44,6 +45,7 @@ export function SiteHeader() {
               Admin
             </Link>
           ) : null}
+          <PixSupportDialog />
         </nav>
 
         <div className="flex items-center gap-1">
@@ -85,6 +87,7 @@ export function SiteHeader() {
               Admin
             </Link>
           ) : null}
+          <PixSupportDialog mobile />
         </nav>
       ) : null}
     </header>

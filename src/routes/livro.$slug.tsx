@@ -83,6 +83,7 @@ function BookDetail() {
             title={book.title.replace(/^Livro d[eoa] /i, "")}
             subtitle={book.subtitle}
             theme={book.cover_theme}
+            slug={book.slug}
             className="h-[420px] w-full"
           />
 
