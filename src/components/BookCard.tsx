@@ -26,6 +26,7 @@ export function BookCard({
           title={book.title.replace(/^Livro d[eoa] /i, "")}
           subtitle={book.subtitle}
           theme={book.cover_theme}
+          slug={book.slug}
           className="h-full min-h-40 w-full transition-transform group-hover:scale-[1.02] sm:min-h-52"
         />
       </Link>

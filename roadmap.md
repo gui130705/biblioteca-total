@@ -9,3 +9,5 @@
 - [x] Atualizar detalhes, biblioteca, carrinho e mensagens para acesso grátis
 - [x] Validar visualmente as rotas principais e manter o build aprovado
 - [x] Calibrar hover, foco por teclado, seleção, sliders e tooltips do leitor nos três temas
+- [x] Adicionar capas ilustradas temáticas aos 9 livros em todo o acervo
+- [x] Adicionar apoio via PIX no menu principal e mobile, com cópia e feedback
