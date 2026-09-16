@@ -12,3 +12,4 @@
 - [x] Adicionar capas ilustradas temáticas aos 9 livros em todo o acervo
 - [x] Adicionar apoio via PIX no menu principal e mobile, com cópia e feedback
 - [x] Exibir card de apoio via PIX abaixo do acesso e criação de conta
+- [x] Simplificar o início sem menu ou conta, com PIX em destaque e leitura direta dos 9 livros
