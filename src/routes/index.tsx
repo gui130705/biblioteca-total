@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, LibraryBig } from "lucide-react";
 import { BookCover } from "@/components/BookCover";
 import { PixSupportCard } from "@/components/PixSupportDialog";
-import { SiteFooter } from "@/components/SiteFooter";
 import { Button } from "@/components/ui/button";
 import { useBooks } from "@/lib/library";
 
@@ -120,7 +119,9 @@ function Index() {
           )}
         </section>
       </main>
-      <SiteFooter />
+      <footer className="border-t border-border/60 px-4 py-8 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} Biblioteca Proibida · Leitura gratuita
+      </footer>
     </div>
   );
 }

@@ -17,8 +17,12 @@ export const PIX_NAME = "Wagner S. Apolinário";
 
 export async function copyPixKey() {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(PIX_KEY);
-    return;
+    try {
+      await navigator.clipboard.writeText(PIX_KEY);
+      return;
+    } catch {
+      // Some browsers block the Clipboard API while still allowing the selection fallback below.
+    }
   }
 
   const input = document.createElement("textarea");
@@ -77,8 +81,8 @@ export function PixSupportCard() {
           <p className="text-xs text-muted-foreground">Nome</p>
           <p className="mt-1 text-sm font-medium">{PIX_NAME}</p>
         </div>
-        <Button variant="outline" className="w-full" onClick={handleCopy} aria-live="polite">
-          {copied ? <Check className="size-4 text-primary" /> : <Copy className="size-4" />}
+        <Button size="lg" className="w-full font-bold uppercase" onClick={handleCopy} aria-live="polite">
+          {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
           {copied ? "Chave copiada" : "Copiar chave PIX"}
         </Button>
       </div>
