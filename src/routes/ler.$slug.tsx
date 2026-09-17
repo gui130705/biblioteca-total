@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   BookOpen,
@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ReaderFigure } from "@/components/ReaderFigure";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -39,6 +40,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useBook } from "@/lib/library";
+import { bookCoverFor } from "@/lib/book-covers";
+import { readerIllustrationFor } from "@/lib/reader-illustrations";
 import { useLogSession } from "@/lib/stats";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -247,6 +250,8 @@ function Reader() {
   const flushedRef = useRef<{ seconds: number; percent: number | null }>({ seconds: 0, percent: null });
 
   const chapter = content?.chapters[chapterIndex];
+  const coverArt = bookCoverFor(slug);
+  const illustration = readerIllustrationFor(slug);
 
   // Restaura o ponto de leitura salvo na conta.
   useEffect(() => {
@@ -823,6 +828,16 @@ function Reader() {
           fontSize: `${prefs.fontSize}px`,
         }}
       >
+        {chapterIndex === 0 && coverArt ? (
+          <ReaderFigure
+            src={coverArt.src}
+            alt={coverArt.alt}
+            caption={`${book.title} — abertura da obra`}
+            variant="cover"
+            eager
+          />
+        ) : null}
+
         <p className="text-xs tracking-[0.25em] uppercase opacity-60">{book.title}</p>
         <h1
           className="mt-3 text-2xl font-bold sm:text-3xl"
@@ -840,16 +855,25 @@ function Reader() {
           }}
         >
           {chapter.paragraphs.map((p, i) => (
-            <p
-              key={i}
-              data-paragraph={i}
-              className={cn(
-                i === 0 && p.length > 80 && "reader-dropcap",
-                highlightedParagraphs.has(i) && "reader-marked",
-              )}
-            >
-              {p}
-            </p>
+            <Fragment key={i}>
+              <p
+                data-paragraph={i}
+                className={cn(
+                  i === 0 && p.length > 80 && "reader-dropcap",
+                  highlightedParagraphs.has(i) && "reader-marked",
+                )}
+              >
+                {p}
+              </p>
+              {illustration?.chapterIndex === chapterIndex &&
+              illustration.afterParagraph === i ? (
+                <ReaderFigure
+                  src={illustration.src}
+                  alt={illustration.alt}
+                  caption={illustration.caption}
+                />
+              ) : null}
+            </Fragment>
           ))}
         </div>
 
