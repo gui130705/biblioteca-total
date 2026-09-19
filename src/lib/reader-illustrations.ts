@@ -217,9 +217,10 @@ function buildDistributedIllustrations(slug: string, chapters: number, paragraph
       const chapterSpecific = specific.find(item => item.chapterIndex === chapterIndex);
       const source = chapterSpecific && positionIndex === 0
         ? chapterSpecific
-        : HISTORY_WEB_ILLUSTRATIONS.find(item => !usedWeb.has(item.src)) ??
-          HISTORY_WEB_ILLUSTRATIONS[(chapterIndex * 2 + positionIndex) % HISTORY_WEB_ILLUSTRATIONS.length];
+        : aiIllustration(slug, chapterIndex, positionIndex);
 
+      // A arte gerada por IA tem seed própria por capítulo/posição, portanto
+      // não volta a exibir a mesma imagem. O banco histórico fica como reserva.
       usedWeb.add(source.src);
       result.push({
         ...source,
