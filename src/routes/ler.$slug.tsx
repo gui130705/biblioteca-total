@@ -841,6 +841,18 @@ function Reader() {
           />
         ) : null}
 
+        {chapterIndex === 0 && coverArt ? (
+          <div className="mx-auto mb-8 max-w-2xl">
+            <ReaderFigure
+              src={coverArt.src}
+              alt={coverArt.alt}
+              caption={`${book.title} — gravura de abertura`}
+              variant="cover"
+              eager
+            />
+          </div>
+        ) : null}
+
         <div className="mx-auto max-w-2xl border-b border-current/10 pb-6">
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] opacity-50">
             Capítulo {chapterIndex + 1}
