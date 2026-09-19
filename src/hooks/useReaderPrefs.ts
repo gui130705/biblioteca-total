@@ -17,12 +17,12 @@ export type ReaderPrefs = {
 const STORAGE_KEY = "biblioteca-proibida-reader-prefs";
 
 export const DEFAULT_PREFS: ReaderPrefs = {
-  theme: "escuro",
-  font: "serif",
-  fontSize: 19,
-  lineHeight: 1.78,
+  theme: "sepia",
+  font: "classica",
+  fontSize: 18,
+  lineHeight: 1.9,
   measure: "media",
-  align: "esquerda",
+  align: "justificado",
 };
 
 export const MEASURE_CH: Record<ReaderMeasure, number> = {

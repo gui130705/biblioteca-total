@@ -193,3 +193,75 @@
     font-size: 3.1em;
   }
 }
+
+
+/* Tipografia editorial: corpo arejado, justificação e ritmo de página de códice. */
+.reader-ancient-text {
+  max-width: 66ch !important;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  hyphens: auto;
+  overflow-wrap: normal;
+}
+
+.reader-ancient-text p {
+  margin: 0;
+  padding: 0;
+  text-align: justify;
+  text-justify: inter-word;
+  text-indent: 1.8em;
+  line-height: inherit;
+}
+
+.reader-ancient-text p + p {
+  margin-top: 0.55em;
+}
+
+.reader-ancient-text.reader-align-esquerda p {
+  text-align: left;
+}
+
+.reader-ancient-text.reader-align-justificado p {
+  text-align: justify;
+}
+
+.reader-ancient-text .reader-dropcap,
+.reader-ancient-text p:first-child {
+  text-indent: 0;
+}
+
+.reader-ancient-text strong {
+  font-weight: 700;
+}
+
+.reader-ancient-text em {
+  font-style: italic;
+}
+
+.reader-chapter-heading {
+  max-width: 66ch;
+  margin-bottom: 2rem;
+}
+
+.reader-chapter-heading h1 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1.15;
+}
+
+.reader-chapter-heading > div:last-child {
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .reader-ancient-text {
+    max-width: 100% !important;
+    font-size: 1em;
+  }
+  .reader-ancient-text p {
+    text-indent: 1.15em;
+    text-align: left;
+  }
+  .reader-ancient-text.reader-align-justificado p {
+    text-align: justify;
+  }
+}
