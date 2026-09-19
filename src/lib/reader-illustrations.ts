@@ -67,7 +67,7 @@ const ART = {
     { src: enoqueNoe, alt: "Noé e a visão do dilúvio em arte bíblica antiga", caption: "Enoque — Noé e a visão do dilúvio." },
     { src: pd("BL_Or_485_f._102r.png"), alt: "Folha de manuscrito etíope do Livro de Enoque", caption: "Livro de Enoque — manuscrito etíope do século XVI." },
     { src: pd("P._Chester_Beatty_XII,_leaf_3,_verso.jpg"), alt: "Fragmento antigo do Livro de Enoque em grego", caption: "Livro de Enoque — fragmento manuscrito antigo em grego." },
-    { src: pd("BL_Or_485_f._102r.png"), alt: "Manuscrito etíope antigo do Livro de Enoque", caption: "Enoque — tradição manuscrita etíope." },
+    { src: pd("Figures_God_took_Enoch.jpg"), alt: "Enoque levado por Deus em gravura bíblica antiga", caption: "Enoque — figura levada por Deus em gravura histórica." },
   ],
   esdras: [
     { src: esdras, alt: "Esdras com manuscritos em cenário antigo", caption: "Esdras — o escriba diante dos manuscritos." },
@@ -105,9 +105,9 @@ const ART = {
     { src: sabedoria, alt: "Rei e escribas em cena de sabedoria antiga", caption: "Sabedoria de Salomão — o ensino do sábio." },
     { src: eclesiasticoSabia, alt: "Sábio ensinando discípulos em arte de manuscrito", caption: "Sabedoria — tradição e ensinamento." },
     { src: eclesiasticoSilencio, alt: "Figura em contemplação em arte sacra antiga", caption: "Sabedoria — contemplação e discernimento." },
-    { src: pd("Book_of_Wisdom_WDL6935.pdf"), alt: "Manuscrito antigo associado ao Livro da Sabedoria", caption: "Sabedoria — tradição manuscrita antiga." },
-    { src: pd("Book_of_Wisdom_WDL6937.pdf"), alt: "Outra edição histórica do Livro da Sabedoria", caption: "Sabedoria — página de uma edição histórica." },
-    { src: pd("The_book_of_Wisdom_-_with_introduction_and_notes_(IA_bookofwisdomwith00goodrich).pdf"), alt: "Edição histórica do Livro da Sabedoria", caption: "Sabedoria — edição histórica e tradição textual." },
+    { src: pd("Solomon_prays_for_wisdom.jpg"), alt: "Salomão orando por sabedoria em pintura histórica", caption: "Sabedoria de Salomão — o pedido pela sabedoria." },
+    { src: pd("Illustration-judgement-of-solomon.jpg"), alt: "Salomão em composição medieval sobre sua sabedoria", caption: "Sabedoria de Salomão — o rei sábio e o templo." },
+    { src: pd("Le_Jugement_de_Salomon,_Martial_Desbois,_Tabellae_selectae_ac_Explicatae,_Padoue,_1691_CROP.png"), alt: "Julgamento de Salomão em gravura histórica", caption: "Salomão — julgamento e discernimento em gravura antiga." },
   ],
 } satisfies Record<string, Artwork[]>;
 
