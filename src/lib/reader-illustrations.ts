@@ -81,71 +81,111 @@ const READER_ILLUSTRATIONS: Record<string, ReaderIllustration[]> = {
 const commonsFile = (name: string) =>
   `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(name)}?width=1400`;
 
-// Banco externo de manuscritos e iluminuras históricas em domínio público/CC0.
-// Ele é usado para impedir que a mesma gravura local seja reciclada em todos os capítulos.
+// Ilustrações geradas por IA sob demanda. Cada capítulo recebe uma cena diferente,
+// com seed própria, para manter a leitura visualmente fluida sem reciclar a mesma arte.
+const aiIllustration = (slug: string, chapterIndex: number, positionIndex: number): ReaderIllustration => {
+  const scenes: Record<string, string[]> = {
+    enoque: [
+      "profeta Enoque diante de uma cidade antediluviana ao entardecer, anjos ao longe, manuscrito bíblico antigo, arte sacra, pintura histórica, pergaminho, iluminação dramática",
+      "Enoque contemplando montanhas e os Vigilantes celestes, céu estrelado, atmosfera apocalíptica, manuscrito medieval, arte sacra detalhada",
+      "viagem visionária de Enoque pelos céus, portais celestes e estrelas, estética de manuscrito antigo, pintura religiosa histórica",
+      "arca de Noé sendo preparada antes do dilúvio, Enoque observando a humanidade, arte bíblica antiga, textura de pergaminho",
+      "anjos guardiões diante de uma montanha sagrada, cenário bíblico antigo, iluminura medieval, luz dourada",
+    ],
+    baruque: [
+      "escriba Baruque escrevendo um pergaminho durante o exílio na Babilônia, arquitetura antiga ao fundo, manuscrito bíblico, arte sacra",
+      "Jerusalém vista à distância durante o exílio, peregrinos e escribas, atmosfera de esperança, pintura histórica em pergaminho",
+      "caravana retornando do exílio em direção a Jerusalém, amanhecer, arquitetura antiga, iluminura bíblica",
+    ],
+    "bel-e-ester": [
+      "Daniel diante do templo de Bel, sacerdotes e estátuas antigas, iluminação dramática, manuscrito bíblico medieval",
+      "Daniel enfrentando o grande dragão diante do povo, cenário babilônico, arte sacra histórica, pergaminho",
+      "Ester diante do rei em um palácio persa, atmosfera solene, manuscrito antigo, pintura histórica",
+    ],
+    eclesiastico: [
+      "sábio hebreu ensinando discípulos em uma biblioteca antiga, pergaminhos, lamparinas, arte sacra, manuscrito medieval",
+      "anciãos conversando sob uma oliveira enquanto um escriba registra ensinamentos, pintura bíblica histórica",
+      "escriba estudando silenciosamente à noite, pergaminhos e lamparina, estética de manuscrito antigo",
+    ],
+    esdras: [
+      "Esdras lendo a Lei diante do povo reunido em Jerusalém, arquitetura do templo ao fundo, arte bíblica histórica",
+      "sacerdotes carregando pergaminhos durante a reconstrução de Jerusalém, caravanas, manuscrito antigo",
+      "povo reunido diante dos muros reconstruídos de Jerusalém, escribas e sacerdotes, iluminura medieval",
+    ],
+    judite: [
+      "Judite caminhando silenciosamente pelo acampamento assírio à noite, tendas e tochas, arte bíblica em manuscrito antigo",
+      "Judite diante de Holofernes em uma tenda assíria, atmosfera histórica, iluminura medieval, arte sacra",
+      "povo de Betúlia celebrando após a libertação, muralhas antigas, bandeiras e tochas, pintura bíblica histórica",
+    ],
+    "oracao-e-suzana": [
+      "jovens hebreus orando antes da fornalha, luz celestial, cenário bíblico, arte sacra medieval",
+      "Susana caminhando por um jardim antigo entre árvores e fontes, atmosfera solene, iluminura bíblica",
+      "Daniel defendendo Susana diante dos anciãos, multidão reunida, manuscrito medieval, pintura histórica",
+    ],
+    "pai-nosso-original": [
+      "Jesus ensinando uma oração aos discípulos ao amanhecer, colina da Galileia, atmosfera contemplativa, arte sacra histórica",
+      "discípulos reunidos em oração diante do mar da Galileia, céu dourado, manuscrito bíblico antigo",
+      "oração subindo simbolicamente aos céus sobre uma paisagem antiga, estrelas e luz celestial, iluminura medieval",
+    ],
+    "sabedoria-de-salomao": [
+      "rei Salomão meditando sobre a Sabedoria entre pergaminhos e colunas do templo, arte sacra histórica",
+      "personificação da Sabedoria iluminando um escriba em uma biblioteca antiga, manuscrito medieval, pintura dourada",
+      "Salomão aconselhando jovens diante do templo, pergaminhos e oliveiras, arte bíblica antiga",
+    ],
+  };
+
+  const list = scenes[slug] ?? scenes.enoque;
+  const prompt = list[(chapterIndex * 3 + positionIndex) % list.length];
+  const seed = chapterIndex * 100 + positionIndex + slug.length;
+  const encoded = encodeURIComponent(
+    `${prompt}, sem texto, sem letras, composição vertical, alta definição, estilo consistente de manuscrito bíblico antigo`,
+  );
+
+  return {
+    src: `https://image.pollinations.ai/prompt/${encoded}?width=900&height=1200&seed=${seed}&nologo=true`,
+    alt: `Ilustração gerada por IA para o capítulo ${chapterIndex + 1} de ${slug}`,
+    caption: `Capítulo ${chapterIndex + 1} — Ilustração temática gerada por IA para acompanhar a narrativa.`,
+    chapterIndex,
+    afterParagraph: 0,
+  };
+};
+
+// Ilustrações históricas externas em domínio público/CC0, usadas como apoio quando necessário.
 const HISTORY_WEB_ILLUSTRATIONS: ReaderIllustration[] = [
   {
-    src: commonsFile("BL Or 485 f. 102r.png"),
-    alt: "Página do manuscrito etíope do Livro de Enoque preservado pela British Library",
-    caption: "Manuscrito etíope do Livro de Enoque — página histórica preservada pela British Library.",
-    chapterIndex: 0,
-    afterParagraph: 0,
+    src: commonsFile("Illuminated Manuscripts (Middleton) figure12.jpg"),
+    alt: "Miniatura medieval de Cristo em majestade",
+    caption: "Miniatura histórica de manuscrito medieval em domínio público.", chapterIndex: 0, afterParagraph: 0,
   },
   {
-    src: commonsFile("P. Chester Beatty XII, leaf 3, verso.jpg"),
-    alt: "Fragmento de papiro grego com texto do Livro de Enoque",
-    caption: "Fragmento antigo do Livro de Enoque em grego, associado aos papiros Chester Beatty.",
-    chapterIndex: 0,
-    afterParagraph: 0,
+    src: commonsFile("Illuminated Manuscripts (Middleton) figure35.jpg"),
+    alt: "Inicial ornamentada de manuscrito medieval",
+    caption: "Inicial ornamentada de manuscrito histórico em domínio público.", chapterIndex: 0, afterParagraph: 0,
   },
   {
-    src: commonsFile("Illuminated manuscript from Serra East, Nubia.jpg"),
-    alt: "Manuscrito iluminado da Núbia com figura humana ricamente vestida",
-    caption: "Manuscrito iluminado da Núbia medieval, evocando a tradição visual dos antigos textos religiosos.",
-    chapterIndex: 0,
-    afterParagraph: 0,
+    src: commonsFile("Illuminated Manuscripts (Middleton) figure41.jpg"),
+    alt: "Ornamentação de manuscrito medieval",
+    caption: "Ornamentação medieval preservada em fonte histórica de domínio público.", chapterIndex: 0, afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Paris Bible.jpg"),
+    alt: "São Paulo escrevendo em uma Bíblia medieval",
+    caption: "São Paulo escrevendo em uma iluminura medieval — imagem CC0.", chapterIndex: 0, afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Illuminated Manuscript, Bible (part), Creation of the world, and Eve, Walters Manuscript W.805, fol. 6v.jpg"),
+    alt: "Criação do mundo e Eva em manuscrito bíblico medieval",
+    caption: "Criação do mundo e Eva em iluminura bíblica medieval — imagem CC0.", chapterIndex: 0, afterParagraph: 0,
   },
   {
     src: commonsFile("Illuminated Manuscript, Bible (part), God appears to Moses and a group of Israelites, Walters Manuscript W.805, fol. 78v.jpg"),
-    alt: "Iluminura bíblica medieval mostrando Moisés e um grupo de israelitas",
-    caption: "Moisés e os israelitas em uma iluminura bíblica medieval do manuscrito W.805.",
-    chapterIndex: 0,
-    afterParagraph: 0,
-  },
-  {
-    src: commonsFile("Illuminated Manuscript, Bible (part), Moses before the burning bush, Walters Manuscript W.805, fol. 37v.jpg"),
-    alt: "Iluminura medieval de Moisés diante da sarça ardente",
-    caption: "Moisés diante da sarça ardente em uma iluminura bíblica medieval.",
-    chapterIndex: 0,
-    afterParagraph: 0,
-  },
-  {
-    src: commonsFile("Illuminated Manuscript, Bible (part), St. Jerome in his study, Walters Manuscript W.805, fol. 1r.jpg"),
-    alt: "São Jerônimo estudando e escrevendo em seu gabinete em uma iluminura medieval",
-    caption: "O trabalho do escriba e do estudioso em uma iluminura do manuscrito bíblico W.805.",
-    chapterIndex: 0,
-    afterParagraph: 0,
+    alt: "Moisés e os israelitas em manuscrito bíblico medieval",
+    caption: "Moisés e os israelitas em iluminura bíblica medieval — imagem CC0.", chapterIndex: 0, afterParagraph: 0,
   },
   {
     src: commonsFile("Illuminated Manuscript, Bible (part), Naomi and Ruth, Walters Manuscript W.805, fol. 155v.jpg"),
-    alt: "Iluminura medieval representando Noemi e Rute",
-    caption: "Noemi e Rute em uma iluminura bíblica medieval preservada pelo Walters Art Museum.",
-    chapterIndex: 0,
-    afterParagraph: 0,
-  },
-  {
-    src: commonsFile("Egmond Gospels - 76 F 1 - 213v.jpg"),
-    alt: "Página ricamente iluminada dos Evangelhos de Egmond",
-    caption: "Uma página dos Evangelhos de Egmond, manuscrito iluminado do século X.",
-    chapterIndex: 0,
-    afterParagraph: 0,
-  },
-  {
-    src: commonsFile("15th-century illuminated manuscript art made in Bruges - Book of Hours, Christ before Pilate, Walters Manuscript W.246, fol. 17v (cropped).jpg"),
-    alt: "Miniatura medieval mostrando Cristo diante de Pilatos",
-    caption: "Miniatura de um manuscrito iluminado de Bruges, com cena bíblica diante de Pilatos.",
-    chapterIndex: 0,
-    afterParagraph: 0,
+    alt: "Noemi e Rute em manuscrito bíblico medieval",
+    caption: "Noemi e Rute em iluminura bíblica medieval — imagem CC0.", chapterIndex: 0, afterParagraph: 0,
   },
 ];
 
