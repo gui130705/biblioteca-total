@@ -860,7 +860,6 @@ function Reader() {
 
         <div
           className={cn("reader-text mx-auto mt-7 max-w-2xl", `reader-align-${prefs.align}`)}
-", `reader-align-${prefs.align}`)}
           style={{
             fontSize: `${prefs.fontSize}px`,
             lineHeight: prefs.lineHeight,
