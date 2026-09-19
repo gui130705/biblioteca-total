@@ -506,7 +506,7 @@ function Reader() {
           </div>
 
           <span
-            className="mr-1 hidden items-center gap-1.5 rounded-full border border-current/15 px-2.5 py-1 text-[11px] opacity-70 sm:inline-flex"
+            className="mr-1 inline-flex shrink-0 items-center gap-1 rounded-full border border-current/15 px-1.5 py-1 text-[10px] opacity-80 sm:gap-1.5 sm:px-2.5 sm:text-[11px]"
             title="Tempo desta sessão"
           >
             <Timer className="size-3" />
