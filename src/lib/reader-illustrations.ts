@@ -78,23 +78,86 @@ const READER_ILLUSTRATIONS: Record<string, ReaderIllustration[]> = {
   ],
 };
 
-const HISTORY_FALLBACKS: ReaderIllustration[] = [
-  { src: esdras, alt: "Escriba antigo registra a história em pergaminho diante de uma cidade murada", caption: "Uma gravura inspirada no mundo antigo: escribas, cidades e a memória preservada em pergaminhos.", chapterIndex: 0, afterParagraph: 0 },
-  { src: baruque, alt: "Viajantes e exilados atravessam uma paisagem do antigo Oriente Próximo", caption: "Paisagem histórica do antigo Oriente Próximo, evocando os caminhos percorridos pelos povos das narrativas antigas.", chapterIndex: 0, afterParagraph: 0 },
-  { src: eclesiastico, alt: "Mestre antigo ensina discípulos entre pergaminhos e oliveiras", caption: "A tradição oral e escrita preserva histórias, conselhos e costumes através das gerações.", chapterIndex: 0, afterParagraph: 0 },
+const commonsFile = (name: string) =>
+  `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(name)}?width=1400`;
+
+// Banco externo de manuscritos e iluminuras históricas em domínio público/CC0.
+// Ele é usado para impedir que a mesma gravura local seja reciclada em todos os capítulos.
+const HISTORY_WEB_ILLUSTRATIONS: ReaderIllustration[] = [
+  {
+    src: commonsFile("BL Or 485 f. 102r.png"),
+    alt: "Página do manuscrito etíope do Livro de Enoque preservado pela British Library",
+    caption: "Manuscrito etíope do Livro de Enoque — página histórica preservada pela British Library.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("P. Chester Beatty XII, leaf 3, verso.jpg"),
+    alt: "Fragmento de papiro grego com texto do Livro de Enoque",
+    caption: "Fragmento antigo do Livro de Enoque em grego, associado aos papiros Chester Beatty.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Illuminated manuscript from Serra East, Nubia.jpg"),
+    alt: "Manuscrito iluminado da Núbia com figura humana ricamente vestida",
+    caption: "Manuscrito iluminado da Núbia medieval, evocando a tradição visual dos antigos textos religiosos.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Illuminated Manuscript, Bible (part), God appears to Moses and a group of Israelites, Walters Manuscript W.805, fol. 78v.jpg"),
+    alt: "Iluminura bíblica medieval mostrando Moisés e um grupo de israelitas",
+    caption: "Moisés e os israelitas em uma iluminura bíblica medieval do manuscrito W.805.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Illuminated Manuscript, Bible (part), Moses before the burning bush, Walters Manuscript W.805, fol. 37v.jpg"),
+    alt: "Iluminura medieval de Moisés diante da sarça ardente",
+    caption: "Moisés diante da sarça ardente em uma iluminura bíblica medieval.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Illuminated Manuscript, Bible (part), St. Jerome in his study, Walters Manuscript W.805, fol. 1r.jpg"),
+    alt: "São Jerônimo estudando e escrevendo em seu gabinete em uma iluminura medieval",
+    caption: "O trabalho do escriba e do estudioso em uma iluminura do manuscrito bíblico W.805.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Illuminated Manuscript, Bible (part), Naomi and Ruth, Walters Manuscript W.805, fol. 155v.jpg"),
+    alt: "Iluminura medieval representando Noemi e Rute",
+    caption: "Noemi e Rute em uma iluminura bíblica medieval preservada pelo Walters Art Museum.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("Egmond Gospels - 76 F 1 - 213v.jpg"),
+    alt: "Página ricamente iluminada dos Evangelhos de Egmond",
+    caption: "Uma página dos Evangelhos de Egmond, manuscrito iluminado do século X.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
+  {
+    src: commonsFile("15th-century illuminated manuscript art made in Bruges - Book of Hours, Christ before Pilate, Walters Manuscript W.246, fol. 17v (cropped).jpg"),
+    alt: "Miniatura medieval mostrando Cristo diante de Pilatos",
+    caption: "Miniatura de um manuscrito iluminado de Bruges, com cena bíblica diante de Pilatos.",
+    chapterIndex: 0,
+    afterParagraph: 0,
+  },
 ];
 
 function buildDistributedIllustrations(slug: string, chapters: number, paragraphsByChapter: number[]): ReaderIllustration[] {
   const specific = READER_ILLUSTRATIONS[slug] ?? [];
-  const pool = specific.length ? specific : HISTORY_FALLBACKS;
   const result: ReaderIllustration[] = [];
+  const usedWeb = new Set<string>();
 
   for (let chapterIndex = 0; chapterIndex < chapters; chapterIndex += 1) {
     const paragraphCount = paragraphsByChapter[chapterIndex] ?? 0;
     if (paragraphCount < 1) continue;
 
-    // Distribui gravuras do começo ao fim: capítulos curtos recebem uma,
-    // capítulos médios recebem duas e capítulos longos recebem três seções visuais.
     const positions =
       paragraphCount >= 30
         ? [
@@ -110,17 +173,25 @@ function buildDistributedIllustrations(slug: string, chapters: number, paragraph
           : [Math.max(0, Math.floor(paragraphCount * 0.5))];
 
     positions.forEach((afterParagraph, positionIndex) => {
-      const source = pool[(chapterIndex * 2 + positionIndex) % pool.length];
+      // Prioriza uma gravura temática própria do livro quando ela existe para este capítulo.
+      const chapterSpecific = specific.find(item => item.chapterIndex === chapterIndex);
+      const source = chapterSpecific && positionIndex === 0
+        ? chapterSpecific
+        : HISTORY_WEB_ILLUSTRATIONS.find(item => !usedWeb.has(item.src)) ??
+          HISTORY_WEB_ILLUSTRATIONS[(chapterIndex * 2 + positionIndex) % HISTORY_WEB_ILLUSTRATIONS.length];
+
+      usedWeb.add(source.src);
       result.push({
         ...source,
         chapterIndex,
         afterParagraph,
-        caption: source.caption.replace(/^[^:]+:/, `Capítulo ${chapterIndex + 1} —`),
+        caption: source.caption.startsWith("Capítulo ")
+          ? source.caption
+          : `Capítulo ${chapterIndex + 1} — ${source.caption}`,
       });
     });
   }
 
-  // As marcações específicas continuam prioritárias, evitando duplicatas muito próximas.
   const explicit = [...specific];
   const occupied = new Set(explicit.map(item => `${item.chapterIndex}:${item.afterParagraph}`));
   return [
