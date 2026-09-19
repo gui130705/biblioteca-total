@@ -23,7 +23,6 @@ import paiNosso from "@/assets/reader-illustrations/pai-nosso-original.jpg";
 import paiNossoCosmos from "@/assets/reader-illustrations/pai-nosso-cosmos.jpg";
 import paiNossoDespertar from "@/assets/reader-illustrations/pai-nosso-despertar.jpg";
 import sabedoria from "@/assets/reader-illustrations/sabedoria-de-salomao.jpg";
-import { lovableReaderArtFor } from "@/lib/lovable-reader-art";
 
 export type ReaderIllustration = {
   src: string;
