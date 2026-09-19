@@ -78,6 +78,51 @@ const READER_ILLUSTRATIONS: Record<string, ReaderIllustration[]> = {
   ],
 };
 
-export function readerIllustrationsFor(slug?: string): ReaderIllustration[] {
-  return slug ? (READER_ILLUSTRATIONS[slug] ?? []) : [];
+const HISTORY_FALLBACKS: ReaderIllustration[] = [
+  { src: esdras, alt: "Escriba antigo registra a história em pergaminho diante de uma cidade murada", caption: "Uma gravura inspirada no mundo antigo: escribas, cidades e a memória preservada em pergaminhos.", chapterIndex: 0, afterParagraph: 0 },
+  { src: baruque, alt: "Viajantes e exilados atravessam uma paisagem do antigo Oriente Próximo", caption: "Paisagem histórica do antigo Oriente Próximo, evocando os caminhos percorridos pelos povos das narrativas antigas.", chapterIndex: 0, afterParagraph: 0 },
+  { src: eclesiastico, alt: "Mestre antigo ensina discípulos entre pergaminhos e oliveiras", caption: "A tradição oral e escrita preserva histórias, conselhos e costumes através das gerações.", chapterIndex: 0, afterParagraph: 0 },
+];
+
+function buildDistributedIllustrations(slug: string, chapters: number, paragraphsByChapter: number[]): ReaderIllustration[] {
+  const specific = READER_ILLUSTRATIONS[slug] ?? [];
+  const pool = specific.length ? specific : HISTORY_FALLBACKS;
+  const result: ReaderIllustration[] = [];
+
+  for (let chapterIndex = 0; chapterIndex < chapters; chapterIndex += 1) {
+    const paragraphCount = paragraphsByChapter[chapterIndex] ?? 0;
+    if (paragraphCount < 2) continue;
+
+    // Mantém pelo menos uma gravura em cada capítulo e duas nas seções longas.
+    const positions = paragraphCount >= 16
+      ? [Math.max(1, Math.floor(paragraphCount * 0.28)), Math.max(1, Math.floor(paragraphCount * 0.72))]
+      : [Math.max(1, Math.floor(paragraphCount * 0.5))];
+
+    positions.forEach((afterParagraph, positionIndex) => {
+      const source = pool[(chapterIndex * 2 + positionIndex) % pool.length];
+      result.push({
+        ...source,
+        chapterIndex,
+        afterParagraph,
+        caption: source.caption.replace(/^[^:]+:/, `Capítulo ${chapterIndex + 1} —`),
+      });
+    });
+  }
+
+  // As marcações específicas continuam prioritárias, evitando duplicatas muito próximas.
+  const explicit = [...specific];
+  const occupied = new Set(explicit.map(item => `${item.chapterIndex}:${item.afterParagraph}`));
+  return [
+    ...explicit,
+    ...result.filter(item => !occupied.has(`${item.chapterIndex}:${item.afterParagraph}`)),
+  ];
+}
+
+export function readerIllustrationsFor(
+  slug?: string,
+  chapters = 0,
+  paragraphsByChapter: number[] = [],
+): ReaderIllustration[] {
+  if (!slug) return [];
+  return buildDistributedIllustrations(slug, chapters, paragraphsByChapter);
 }
