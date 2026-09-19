@@ -1,0 +1,195 @@
+/* Leitor com estética de livro antigo — totalmente local, sem imagens externas. */
+.reader-surface {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(123, 78, 31, .08), transparent 28%),
+    radial-gradient(circle at 82% 76%, rgba(90, 54, 23, .07), transparent 30%),
+    #d9c49d;
+  color: #3d2b1f;
+}
+
+.reader-surface.reader-papel,
+.reader-surface.reader-sepia {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(112, 70, 25, .10), transparent 25%),
+    radial-gradient(circle at 88% 80%, rgba(93, 53, 21, .08), transparent 28%),
+    repeating-linear-gradient(0deg, rgba(90, 55, 25, .018) 0 1px, transparent 1px 4px),
+    #dfcda8;
+  color: #3c2a1d;
+}
+
+.reader-surface.reader-escuro {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(176, 133, 73, .07), transparent 28%),
+    #201a15;
+  color: #eadfc8;
+}
+
+.reader-bar {
+  background: rgba(55, 37, 23, .92);
+  color: #f3e8ce;
+  border-bottom: 1px solid rgba(255, 226, 166, .18);
+  box-shadow: 0 3px 18px rgba(35, 22, 12, .22);
+  backdrop-filter: blur(8px);
+}
+
+.reader-book-page {
+  position: relative;
+  min-height: calc(100vh - 1rem);
+  margin-top: 4.25rem;
+  margin-bottom: 2rem;
+  max-width: 980px !important;
+  padding: 4rem clamp(1.35rem, 5vw, 5.5rem) 5rem !important;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(102, 63, 24, .07), transparent 24%),
+    radial-gradient(circle at 94% 88%, rgba(102, 63, 24, .07), transparent 25%),
+    repeating-linear-gradient(0deg, rgba(78, 48, 22, .014) 0 1px, transparent 1px 5px),
+    #f1e3c2;
+  border: 1px solid rgba(91, 57, 25, .28);
+  border-radius: 3px;
+  box-shadow:
+    0 18px 55px rgba(47, 30, 17, .25),
+    inset 0 0 0 7px rgba(113, 72, 31, .045),
+    inset 0 0 45px rgba(91, 53, 19, .10);
+}
+
+.reader-book-page::before,
+.reader-book-page::after {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  height: 1px;
+  background: rgba(91, 57, 25, .22);
+  pointer-events: none;
+}
+.reader-book-page::before { top: 1.25rem; }
+.reader-book-page::after { bottom: 1.25rem; }
+
+.reader-escuro .reader-book-page {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(220, 176, 105, .05), transparent 25%),
+    #29221b;
+  border-color: rgba(224, 191, 132, .18);
+  box-shadow: 0 18px 55px rgba(0,0,0,.45), inset 0 0 45px rgba(0,0,0,.22);
+}
+
+.reader-chapter-heading {
+  position: relative;
+  text-align: center;
+  border-bottom: 1px solid rgba(91, 57, 25, .28);
+}
+
+.reader-ornament {
+  margin-bottom: .65rem;
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: #7c5429;
+}
+.reader-escuro .reader-ornament { color: #c7a36b; }
+
+.reader-chapter-kicker {
+  letter-spacing: .28em;
+  color: #76522c;
+}
+.reader-escuro .reader-chapter-kicker { color: #c9ac7b; }
+
+.reader-chapter-heading h1 {
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-weight: 600 !important;
+  letter-spacing: .01em !important;
+  color: inherit;
+}
+
+.reader-ancient-text {
+  font-family: Georgia, "Times New Roman", "Palatino Linotype", serif !important;
+  color: inherit;
+}
+
+.reader-ancient-text p {
+  margin: 0 0 1.25em;
+  text-indent: 1.6em;
+  letter-spacing: .005em;
+}
+
+.reader-ancient-text p:first-child {
+  text-indent: 0;
+}
+
+.reader-ancient-text p:first-child::first-letter,
+.reader-ancient-text .reader-dropcap::first-letter {
+  float: left;
+  margin: .04em .10em 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 3.7em;
+  line-height: .78;
+  font-weight: 700;
+  color: #7b4d22;
+}
+
+.reader-escuro .reader-ancient-text p:first-child::first-letter,
+.reader-escuro .reader-ancient-text .reader-dropcap::first-letter {
+  color: #d0ac72;
+}
+
+.reader-figure {
+  margin: 2.7rem auto;
+  max-width: 760px;
+  text-align: center;
+}
+
+.reader-figure-frame {
+  position: relative;
+  padding: .55rem;
+  background: #d6bd8e;
+  border: 1px solid rgba(79, 48, 21, .35);
+  box-shadow: 0 7px 22px rgba(48, 29, 14, .16), inset 0 0 0 4px rgba(255,255,255,.18);
+}
+
+.reader-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: cover;
+  filter: sepia(.16) saturate(.88) contrast(.96);
+}
+
+.reader-figure figcaption {
+  margin: .7rem auto 0;
+  max-width: 90%;
+  font-family: Georgia, serif;
+  font-size: .78rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: #6e4b2a;
+}
+
+.reader-escuro .reader-figure-frame {
+  background: #51402b;
+  border-color: rgba(224, 191, 132, .22);
+}
+.reader-escuro .reader-figure figcaption { color: #c8ad80; }
+
+.reader-book-page .border-t {
+  border-color: rgba(91, 57, 25, .28) !important;
+}
+
+@media (max-width: 640px) {
+  .reader-book-page {
+    margin-top: 3.6rem;
+    margin-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+    padding-top: 3rem !important;
+    padding-bottom: 4rem !important;
+  }
+  .reader-ancient-text p {
+    text-indent: 1.1em;
+  }
+  .reader-ancient-text p:first-child::first-letter {
+    font-size: 3.1em;
+  }
+}

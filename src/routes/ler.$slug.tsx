@@ -68,6 +68,7 @@ import {
   useSaveProgress,
 } from "@/lib/reading";
 import { cn } from "@/lib/utils";
+import "@/styles/reader-ancient.css";
 
 export const Route = createFileRoute("/ler/$slug")({
   head: () => ({
@@ -825,7 +826,7 @@ function Reader() {
         ref={bodyRef}
         onMouseUp={handleSelection}
         onTouchEnd={handleSelection}
-        className="mx-auto w-full px-5 pt-20 pb-32 sm:pt-24"
+        className="reader-book-page mx-auto w-full px-5 pt-20 pb-32 sm:pt-24"
         style={{
           maxWidth: `${MEASURE_CH[prefs.measure]}ch`,
           fontSize: `${prefs.fontSize}px`,
@@ -841,8 +842,8 @@ function Reader() {
           />
         ) : null}
 
-        <div className="mx-auto max-w-2xl border-b border-current/10 pb-6">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] opacity-50">
+        <div className="reader-chapter-heading mx-auto max-w-2xl pb-6">
+          <div className="reader-ornament" aria-hidden="true">❦</div>\n          <p className="reader-chapter-kicker text-[11px] font-medium uppercase tracking-[0.22em] opacity-50">
             Capítulo {chapterIndex + 1}
           </p>
           <h1
