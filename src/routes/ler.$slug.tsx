@@ -825,7 +825,7 @@ function Reader() {
         ref={bodyRef}
         onMouseUp={handleSelection}
         onTouchEnd={handleSelection}
-        className="mx-auto w-full px-5 pt-24 pb-32"
+        className="mx-auto w-full px-5 pt-20 pb-32 sm:pt-24"
         style={{
           maxWidth: `${MEASURE_CH[prefs.measure]}ch`,
           fontSize: `${prefs.fontSize}px`,
@@ -841,16 +841,26 @@ function Reader() {
           />
         ) : null}
 
-        <p className="text-xs tracking-[0.25em] uppercase opacity-60">{book.title}</p>
-        <h1
-          className="mt-3 text-2xl font-bold sm:text-3xl"
-          style={{ fontFamily: READER_FONT_STACK[prefs.font] }}
-        >
-          {chapter.title}
-        </h1>
+        <div className="mx-auto max-w-2xl border-b border-current/10 pb-6">
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] opacity-50">
+            Capítulo {chapterIndex + 1}
+          </p>
+          <h1
+            className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl"
+            style={{ fontFamily: READER_FONT_STACK[prefs.font] }}
+          >
+            {chapter.title}
+          </h1>
+          <div className="mt-3 flex items-center gap-3 text-xs opacity-50">
+            <span>{book.title}</span>
+            <span aria-hidden="true">·</span>
+            <span>{percent}% concluído</span>
+          </div>
+        </div>
 
         <div
-          className={cn("reader-text mt-8", `reader-align-${prefs.align}`)}
+          className={cn("reader-text mx-auto mt-7 max-w-2xl", `reader-align-${prefs.align}`)}
+", `reader-align-${prefs.align}`)}
           style={{
             fontSize: `${prefs.fontSize}px`,
             lineHeight: prefs.lineHeight,
