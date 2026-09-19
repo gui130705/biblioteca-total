@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useBook } from "@/lib/library";
 import { bookCoverFor } from "@/lib/book-covers";
-import { readerIllustrationFor } from "@/lib/reader-illustrations";
+import { readerIllustrationsFor } from "@/lib/reader-illustrations";
 import { useLogSession } from "@/lib/stats";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -251,7 +251,7 @@ function Reader() {
 
   const chapter = content?.chapters[chapterIndex];
   const coverArt = bookCoverFor(slug);
-  const illustration = readerIllustrationFor(slug);
+  const illustrations = readerIllustrationsFor(slug);
 
   // Restaura o ponto de leitura salvo na conta.
   useEffect(() => {
@@ -865,14 +865,16 @@ function Reader() {
               >
                 {p}
               </p>
-              {illustration?.chapterIndex === chapterIndex &&
-              illustration.afterParagraph === i ? (
-                <ReaderFigure
-                  src={illustration.src}
-                  alt={illustration.alt}
-                  caption={illustration.caption}
-                />
-              ) : null}
+              {illustrations.map((item, itemIndex) =>
+                item.chapterIndex === chapterIndex && item.afterParagraph === i ? (
+                  <ReaderFigure
+                    key={`illustration-${itemIndex}`}
+                    src={item.src}
+                    alt={item.alt}
+                    caption={item.caption}
+                  />
+                ) : null,
+              )}
             </Fragment>
           ))}
         </div>
