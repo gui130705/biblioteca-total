@@ -91,12 +91,23 @@ function buildDistributedIllustrations(slug: string, chapters: number, paragraph
 
   for (let chapterIndex = 0; chapterIndex < chapters; chapterIndex += 1) {
     const paragraphCount = paragraphsByChapter[chapterIndex] ?? 0;
-    if (paragraphCount < 2) continue;
+    if (paragraphCount < 1) continue;
 
-    // Mantém pelo menos uma gravura em cada capítulo e duas nas seções longas.
-    const positions = paragraphCount >= 16
-      ? [Math.max(1, Math.floor(paragraphCount * 0.28)), Math.max(1, Math.floor(paragraphCount * 0.72))]
-      : [Math.max(1, Math.floor(paragraphCount * 0.5))];
+    // Distribui gravuras do começo ao fim: capítulos curtos recebem uma,
+    // capítulos médios recebem duas e capítulos longos recebem três seções visuais.
+    const positions =
+      paragraphCount >= 30
+        ? [
+            Math.max(0, Math.floor(paragraphCount * 0.2)),
+            Math.max(0, Math.floor(paragraphCount * 0.5)),
+            Math.max(0, Math.floor(paragraphCount * 0.8)),
+          ]
+        : paragraphCount >= 10
+          ? [
+              Math.max(0, Math.floor(paragraphCount * 0.3)),
+              Math.max(0, Math.floor(paragraphCount * 0.7)),
+            ]
+          : [Math.max(0, Math.floor(paragraphCount * 0.5))];
 
     positions.forEach((afterParagraph, positionIndex) => {
       const source = pool[(chapterIndex * 2 + positionIndex) % pool.length];
