@@ -1,3 +1,12 @@
+import baruqueGenerated from "@/assets/reader-illustrations/generated/baruque.svg";
+import belGenerated from "@/assets/reader-illustrations/generated/bel-e-ester.svg";
+import eclesiasticoGenerated from "@/assets/reader-illustrations/generated/eclesiastico.svg";
+import enoqueGenerated from "@/assets/reader-illustrations/generated/enoque.svg";
+import esdrasGenerated from "@/assets/reader-illustrations/generated/esdras.svg";
+import juditeGenerated from "@/assets/reader-illustrations/generated/judite.svg";
+import suzanaGenerated from "@/assets/reader-illustrations/generated/suzana.svg";
+import paiNossoGenerated from "@/assets/reader-illustrations/generated/pai-nosso.svg";
+import sabedoriaGenerated from "@/assets/reader-illustrations/generated/sabedoria-de-salomao.svg";
 import baruque from "@/assets/reader-illustrations/baruque.jpg";
 import baruqueLuto from "@/assets/reader-illustrations/baruque-siao-em-luto.jpg";
 import baruqueJerusalem from "@/assets/reader-illustrations/baruque-retorno-jerusalem.jpg";
@@ -36,49 +45,56 @@ type Artwork = Omit<ReaderIllustration, "chapterIndex" | "afterParagraph">;
 
 const ART = {
   baruque: [
+    { src: baruqueGenerated, alt: "Baruque em oração diante das ruínas de Jerusalém", caption: "Baruque — oração e memória diante de Jerusalém." },
     { src: baruque, alt: "Baruque em oração diante da cidade antiga", caption: "Baruque — oração e memória diante de Jerusalém." },
     { src: baruqueLuto, alt: "Baruque em lamento junto às ruínas de Jerusalém", caption: "Baruque — lamento e esperança entre as ruínas." },
     { src: baruqueJerusalem, alt: "Retorno a Jerusalém em paisagem antiga", caption: "Baruque — retorno e restauração de Jerusalém." },
   ],
   bel: [
+    { src: belGenerated, alt: "Ester diante do trono em uma corte persa antiga", caption: "Bel e Ester — coragem diante do poder." },
     { src: belEster, alt: "Bel e Ester em cenário bíblico antigo", caption: "Bel e Ester — coragem diante do poder." },
     { src: belEsterDragoes, alt: "Cena de Bel e Ester com os dragões do relato", caption: "Bel e Ester — a cena dos dragões." },
     { src: belEsterDecreto, alt: "Bel e Ester diante de um decreto real", caption: "Bel e Ester — resistência ao decreto." },
   ],
   eclesiastico: [
+    { src: eclesiasticoGenerated, alt: "Ancião ensinando discípulos a partir de um pergaminho", caption: "Eclesiástico — o ensino da sabedoria." },
     { src: eclesiastico, alt: "Ancião e escriba em estudo de sabedoria", caption: "Eclesiástico — o ensino da sabedoria." },
     { src: eclesiasticoSilencio, alt: "Ancião em contemplação silenciosa", caption: "Eclesiástico — silêncio e contemplação." },
     { src: eclesiasticoSabia, alt: "Discípulo ouvindo um sábio em manuscrito antigo", caption: "Eclesiástico — escutar a voz do sábio." },
   ],
   enoque: [
+    { src: enoqueGenerated, alt: "Enoque ascendendo em direção aos céus celestiais", caption: "Enoque — visão e contemplação celestial." },
     { src: enoque, alt: "Enoque contemplando uma visão celestial", caption: "Enoque — visão e contemplação celestial." },
     { src: enoqueCeus, alt: "Representação dos sete céus em arte sacra antiga", caption: "Enoque — os sete céus da visão." },
     { src: enoqueNoe, alt: "Noé e a visão do dilúvio em arte bíblica antiga", caption: "Enoque — Noé e a visão do dilúvio." },
   ],
   esdras: [
+    { src: esdrasGenerated, alt: "Esdras lendo um pergaminho diante da comunidade", caption: "Esdras — o escriba diante dos manuscritos." },
     { src: esdras, alt: "Esdras com manuscritos em cenário antigo", caption: "Esdras — o escriba diante dos manuscritos." },
     { src: esdrasJovens, alt: "Três jovens em narrativa bíblica antiga", caption: "Esdras — os três jovens e a prova da fé." },
     { src: esdrasCaravana, alt: "Caravana de sacerdotes em viagem", caption: "Esdras — a caravana dos sacerdotes." },
   ],
   judite: [
+    { src: juditeGenerated, alt: "Judite diante de um acampamento assírio", caption: "Judite — coragem diante do cerco." },
     { src: judite, alt: "Judite em cenário de guerra do antigo Oriente", caption: "Judite — coragem diante do cerco." },
     { src: juditeGuardas, alt: "Guardas assírios em acampamento antigo", caption: "Judite — o acampamento dos assírios." },
     { src: juditeClamor, alt: "Povo de Israel reunido em oração", caption: "Judite — clamor de Israel." },
   ],
   suzana: [
+    { src: suzanaGenerated, alt: "Suzana em um antigo jardim entre oliveiras", caption: "Suzana — a cena do jardim." },
     { src: oracaoSuzana, alt: "Suzana em jardim representado como manuscrito antigo", caption: "Suzana — a cena do jardim." },
     { src: oracaoJardim, alt: "Suzana em oração no jardim", caption: "Suzana — oração e testemunho." },
     { src: oracaoFornalha, alt: "Oração diante da fornalha em arte sacra", caption: "Oração — fé diante da provação." },
   ],
   pai: [
+    { src: paiNossoGenerated, alt: "Figura antiga em oração sob um céu estrelado", caption: "Pai Nosso — a oração em tradição antiga." },
     { src: paiNosso, alt: "Representação antiga do Pai Nosso", caption: "Pai Nosso — a oração em tradição antiga." },
     { src: paiNossoDespertar, alt: "Figura em despertar espiritual em arte sacra", caption: "Pai Nosso — despertar espiritual." },
     { src: paiNossoCosmos, alt: "Céu e cosmos em composição de manuscrito antigo", caption: "Pai Nosso — oração e cosmos." },
   ],
   sabedoria: [
+    { src: sabedoriaGenerated, alt: "Salomão orando no templo por sabedoria", caption: "Sabedoria de Salomão — oração e discernimento." },
     { src: sabedoria, alt: "Rei e escribas em cena de sabedoria antiga", caption: "Sabedoria de Salomão — o ensino do sábio." },
-    { src: eclesiasticoSabia, alt: "Sábio ensinando discípulos em arte de manuscrito", caption: "Sabedoria — tradição e ensinamento." },
-    { src: eclesiasticoSilencio, alt: "Figura em contemplação em arte sacra antiga", caption: "Sabedoria — contemplação e discernimento." },
   ],
 } satisfies Record<string, Artwork[]>;
 
@@ -132,10 +148,7 @@ export function readerIllustrationsFor(
     const positions = positionsForChapter(paragraphCount);
 
     positions.forEach((afterParagraph, positionIndex) => {
-      const generatedSrc = lovableReaderArtFor(slug, chapterIndex);
-      const art = generatedSrc
-        ? { src: generatedSrc, alt: `Ilustração original do capítulo ${chapterIndex + 1}`, caption: `Ilustração temática gerada por IA para o capítulo ${chapterIndex + 1}.` }
-        : family[(chapterIndex * 2 + positionIndex) % family.length];
+      const art = family[(chapterIndex * 2 + positionIndex) % family.length];
       if (!art) return;
       result.push({
         ...art,
