@@ -31,11 +31,43 @@ export function formatMinutes(minutes: number) {
   return m === 0 ? `${h} h` : `${h} h ${m} min`;
 }
 
+function normalizeReaderText(text: string) {
+  return text
+    .normalize("NFC")
+    .replace(/\u00a0/g, " ")
+    .replace(/\\s+/g, " ")
+    .replace(/\\s+([,.;:!?])/g, "$1")
+    .replace(/([,.;:!?])(?=[A-Za-zÀ-ÿ])/g, "$1 ")
+    .replace(/\\s+-\\s+/g, " — ")
+    .replace(/1º ENOQUE,?\\s*\\d+(?:,\\s*\\d+)*/gi, "")
+    .replace(/\\bdisse-lhe(s)?\\b/gi, "disse-lhe$1")
+    .replace(/\\btornou-se\\b/gi, "tornou-se")
+    .replace(/\\btornouse\\b/gi, "tornou-se")
+    .replace(/\\blançao\\b/gi, "lança-o")
+    .replace(/\\btem-se\\b/gi, "têm-se")
+    .replace(/\\btem se\\b/gi, "têm-se")
+    .replace(/\\s{2,}/g, " ")
+    .trim();
+}
+
+function normalizeBookContent(content: BookContent): BookContent {
+  return {
+    ...content,
+    chapters: content.chapters.map((chapter) => ({
+      ...chapter,
+      title: normalizeReaderText(chapter.title),
+      paragraphs: chapter.paragraphs
+        .map(normalizeReaderText)
+        .filter(Boolean),
+    })),
+  };
+}
+
 export async function loadBookContent(slug: string): Promise<BookContent | null> {
   const loader = modules[`../content/books/${slug}.json`];
   if (!loader) return null;
   const mod = (await loader()) as { default: BookContent };
-  return mod.default;
+  return normalizeBookContent(mod.default);
 }
 
 export function useBookContent(slug: string) {
