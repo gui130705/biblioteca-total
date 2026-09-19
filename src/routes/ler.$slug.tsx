@@ -251,7 +251,10 @@ function Reader() {
 
   const chapter = content?.chapters[chapterIndex];
   const coverArt = bookCoverFor(slug);
-  const illustrations = readerIllustrationsFor(slug);
+  const illustrations = useMemo(
+    () => readerIllustrationsFor(slug, content?.chapters.length ?? 0, content?.chapters.map((item) => item.paragraphs.length) ?? []),
+    [slug, content],
+  );
 
   // Restaura o ponto de leitura salvo na conta.
   useEffect(() => {
